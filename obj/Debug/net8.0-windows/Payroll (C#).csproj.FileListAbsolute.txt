@@ -1,0 +1,36 @@
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\Payroll (C#).exe
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\Payroll (C#).deps.json
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\Payroll (C#).runtimeconfig.json
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\Payroll (C#).dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\Payroll (C#).pdb
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows\Payroll__C__.Login.resources
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows\Payroll__C__.Properties.Resources.resources
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows\Payroll (C#).csproj.GenerateResource.cache
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows\Payroll (C#).GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows\Payroll (C#).AssemblyInfoInputs.cache
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows\Payroll (C#).AssemblyInfo.cs
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows\Payroll (C#).csproj.CoreCompileInputs.cache
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows\Payroll (C#).dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows\refint\Payroll (C#).dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows\Payroll (C#).pdb
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows\Payroll (C#).genruntimeconfig.cache
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows\ref\Payroll (C#).dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows\Payroll__C__.Employee.resources
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows\Payroll (C#).csproj.AssemblyReference.cache
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\CrystalDecisions.CrystalReports.Engine.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\CrystalDecisions.ReportSource.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\CrystalDecisions.Shared.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\CrystalDecisions.Windows.Forms.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\CrystalDecisions.ReportAppServer.DataDefModel.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\CrystalDecisions.ReportAppServer.ClientDoc.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\CrystalDecisions.ReportAppServer.ReportDefModel.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\CrystalDecisions.ReportAppServer.Controllers.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\CrystalDecisions.ReportAppServer.CommLayer.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\CrystalDecisions.ReportAppServer.DataSetConversion.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\CrystalDecisions.ReportAppServer.Prompting.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\CrystalDecisions.ReportAppServer.XmlSerialize.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\CrystalDecisions.ReportAppServer.CubeDefModel.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\CrystalDecisions.ReportAppServer.CommonObjectModel.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\CrystalDecisions.ReportAppServer.ObjectFactory.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows\CrystalDecisions.ReportAppServer.CommonControls.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows\Payroll .24EF0C88.Up2Date
