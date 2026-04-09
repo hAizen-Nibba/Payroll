@@ -27,7 +27,6 @@ namespace Payroll__C__
             cmbDept.SelectedIndexChanged += cmbDept_SelectedIndexChanged;
             cmbPos.SelectedIndexChanged += cmbPos_SelectedIndexChanged;
             cmbName.SelectedIndexChanged += cmbName_SelectedIndexChanged;
-            cmPeriods.SelectedIndexChanged += cmPeriods_SelectedIndexChanged;
 
             // Attendance buttons
             btnAddAttendance.Click += btnAddAttendance_Click;
@@ -54,7 +53,6 @@ namespace Payroll__C__
                 LoadDepartments();
                 LoadPositions();
                 LoadEmployees();
-                LoadPeriods();
 
                 LoadAttendance();
                 LoadOvertime();
@@ -188,28 +186,6 @@ namespace Payroll__C__
             cmbName.SelectedIndex = 0;
         }
 
-        private void LoadPeriods()
-        {
-            string query = @"
-        SELECT 
-            payroll_id,
-            CONCAT(DATE_FORMAT(period_start, '%Y-%m-%d'), ' to ', DATE_FORMAT(period_end, '%Y-%m-%d')) AS period_name
-        FROM payroll_periods
-        ORDER BY payroll_id DESC";
-
-            DataTable dt = ExecuteQuery(query);
-
-            DataRow allRow = dt.NewRow();
-            allRow["payroll_id"] = 0;
-            allRow["period_name"] = "All Periods";
-            dt.Rows.InsertAt(allRow, 0);
-
-            cmPeriods.DataSource = dt;
-            cmPeriods.DisplayMember = "period_name";
-            cmPeriods.ValueMember = "payroll_id";
-            cmPeriods.SelectedIndex = 0;
-        }
-
         #endregion
 
         #region Filter Helpers
@@ -228,7 +204,6 @@ namespace Payroll__C__
         private int SelectedDeptId => GetSelectedComboValue(cmbDept);
         private int SelectedPosId => GetSelectedComboValue(cmbPos);
         private int SelectedEmpId => GetSelectedComboValue(cmbName);
-        private int SelectedPayrollId => GetSelectedComboValue(cmPeriods);
 
         #endregion
 
@@ -282,25 +257,23 @@ namespace Payroll__C__
         private void LoadDeductions()
         {
             string query = @"
-        SELECT 
-            pdi.ded_id AS 'ID',
-            e.emp_id AS 'Employee ID',
-            CONCAT(e.f_name, ' ', e.l_name) AS 'Employee Name',
-            pdi.ded_type AS 'Deduction',
-            pdi.amount AS 'Amount',
-            CONCAT(DATE_FORMAT(pp.period_start, '%Y-%m-%d'), ' to ', DATE_FORMAT(pp.period_end, '%Y-%m-%d')) AS 'Payroll Period'
-        FROM payroll_deduction_items pdi
-        INNER JOIN payroll_slip_record psr ON pdi.pay_rec_id = psr.pay_rec_id
-        INNER JOIN employees e ON psr.emp_id = e.emp_id
-        INNER JOIN payroll_periods pp ON psr.payroll_id = pp.payroll_id
-        WHERE (@payrollId = 0 OR psr.payroll_id = @payrollId)
-          AND (@empId = 0 OR e.emp_id = @empId)
-          AND (@deptId = 0 OR e.dept_id = @deptId)
-          AND (@posId = 0 OR e.pos_id = @posId)
-        ORDER BY pp.period_start DESC, e.f_name, e.l_name";
+    SELECT 
+        pdi.ded_id AS 'ID',
+        e.emp_id AS 'Employee ID',
+        CONCAT(e.f_name, ' ', e.l_name) AS 'Employee Name',
+        pdi.ded_type AS 'Deduction',
+        pdi.amount AS 'Amount',
+        CONCAT(DATE_FORMAT(pp.period_start, '%Y-%m-%d'), ' to ', DATE_FORMAT(pp.period_end, '%Y-%m-%d')) AS 'Payroll Period'
+    FROM payroll_deduction_items pdi
+    INNER JOIN payroll_slip_record psr ON pdi.pay_rec_id = psr.pay_rec_id
+    INNER JOIN employees e ON psr.emp_id = e.emp_id
+    INNER JOIN payroll_periods pp ON psr.payroll_id = pp.payroll_id
+    WHERE (@empId = 0 OR e.emp_id = @empId)
+      AND (@deptId = 0 OR e.dept_id = @deptId)
+      AND (@posId = 0 OR e.pos_id = @posId)
+    ORDER BY pp.period_start DESC, e.f_name, e.l_name";
 
             dgvDeduction.DataSource = ExecuteQuery(query,
-                new MySqlParameter("@payrollId", SelectedPayrollId),
                 new MySqlParameter("@empId", SelectedEmpId),
                 new MySqlParameter("@deptId", SelectedDeptId),
                 new MySqlParameter("@posId", SelectedPosId));
@@ -309,33 +282,31 @@ namespace Payroll__C__
         private void LoadPayrollSlipRecord()
         {
             string query = @"
-        SELECT 
-            psr.pay_rec_id AS 'Record ID',
-            psr.payroll_id AS 'Payroll ID',
-            e.emp_id AS 'Employee ID',
-            CONCAT(e.f_name, ' ', e.l_name) AS 'Employee Name',
-            CONCAT(
-                DATE_FORMAT(pp.period_start, '%Y-%m-%d'),
-                ' to ',
-                DATE_FORMAT(pp.period_end, '%Y-%m-%d')
-            ) AS 'Payroll Period',
-            psr.gross_pay AS 'Gross Pay',
-            psr.total_deduction AS 'Total Deduction',
-            psr.net_pay AS 'Net Pay'
-        FROM payroll_slip_record psr
-        INNER JOIN employees e ON psr.emp_id = e.emp_id
-        INNER JOIN payroll_periods pp ON psr.payroll_id = pp.payroll_id
-        WHERE (@payrollId = 0 OR psr.payroll_id = @payrollId)
-          AND (@empId = 0 OR psr.emp_id = @empId)
-          AND (@deptId = 0 OR e.dept_id = @deptId)
-          AND (@posId = 0 OR e.pos_id = @posId)
-        ORDER BY psr.payroll_id DESC, e.f_name, e.l_name";
+    SELECT 
+        psr.pay_rec_id AS 'Record ID',
+        psr.payroll_id AS 'Payroll ID',
+        e.emp_id AS 'Employee ID',
+        CONCAT(e.f_name, ' ', e.l_name) AS 'Employee Name',
+        CONCAT(
+            DATE_FORMAT(pp.period_start, '%Y-%m-%d'),
+            ' to ',
+            DATE_FORMAT(pp.period_end, '%Y-%m-%d')
+        ) AS 'Payroll Period',
+        psr.gross_pay AS 'Gross Pay',
+        psr.total_deduction AS 'Total Deduction',
+        psr.net_pay AS 'Net Pay'
+    FROM payroll_slip_record psr
+    INNER JOIN employees e ON psr.emp_id = e.emp_id
+    INNER JOIN payroll_periods pp ON psr.payroll_id = pp.payroll_id
+    WHERE (@empId = 0 OR psr.emp_id = @empId)
+      AND (@deptId = 0 OR e.dept_id = @deptId)
+      AND (@posId = 0 OR e.pos_id = @posId)
+    ORDER BY psr.payroll_id DESC, e.f_name, e.l_name";
 
             dgvPayrollSlipRecord.DataSource = ExecuteQuery(query,
-                new MySql.Data.MySqlClient.MySqlParameter("@payrollId", SelectedPayrollId),
-                new MySql.Data.MySqlClient.MySqlParameter("@empId", SelectedEmpId),
-                new MySql.Data.MySqlClient.MySqlParameter("@deptId", SelectedDeptId),
-                new MySql.Data.MySqlClient.MySqlParameter("@posId", SelectedPosId));
+                new MySqlParameter("@empId", SelectedEmpId),
+                new MySqlParameter("@deptId", SelectedDeptId),
+                new MySqlParameter("@posId", SelectedPosId));
         }
 
         private void LoadAllGrids()
@@ -394,7 +365,6 @@ namespace Payroll__C__
                 cmbDept.SelectedIndex = 0;
                 cmbPos.SelectedIndex = 0;
                 cmbName.SelectedIndex = 0;
-                cmPeriods.SelectedIndex = 0;
 
                 LoadAllGrids();
             }
@@ -412,7 +382,6 @@ namespace Payroll__C__
                 LoadDepartments();
                 LoadPositions();
                 LoadEmployees();
-                LoadPeriods();
                 LoadAllGrids();
             }
             catch (Exception ex)
@@ -452,17 +421,6 @@ namespace Payroll__C__
             try
             {
                 LoadAllGrids();
-            }
-            catch
-            {
-            }
-        }
-
-        private void cmPeriods_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                LoadPayrollSlipRecord();
             }
             catch
             {

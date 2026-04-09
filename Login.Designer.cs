@@ -72,9 +72,9 @@
             pictureBox2.BackColor = Color.FromArgb(0, 0, 192);
             pictureBox2.BackgroundImage = (Image)resources.GetObject("pictureBox2.BackgroundImage");
             pictureBox2.BackgroundImageLayout = ImageLayout.Zoom;
-            pictureBox2.Location = new Point(48, 128);
+            pictureBox2.Location = new Point(0, 96);
             pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(168, 144);
+            pictureBox2.Size = new Size(304, 272);
             pictureBox2.TabIndex = 3;
             pictureBox2.TabStop = false;
             // 
@@ -165,6 +165,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1264, 681);
+            Controls.Add(label1);
             Controls.Add(button1);
             Controls.Add(label4);
             Controls.Add(label3);
@@ -174,7 +175,6 @@
             Controls.Add(btnForgotPass);
             Controls.Add(label2);
             Controls.Add(pictureBox2);
-            Controls.Add(label1);
             Controls.Add(pictureBox1);
             FormBorderStyle = FormBorderStyle.Fixed3D;
             Name = "Login";

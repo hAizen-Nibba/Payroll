@@ -34,8 +34,6 @@
             cmbPos = new ComboBox();
             cmbName = new ComboBox();
             label2 = new Label();
-            cmPeriods = new ComboBox();
-            label4 = new Label();
             dgvOvertime = new DataGridView();
             dgvDeduction = new DataGridView();
             btnFilter = new Button();
@@ -46,6 +44,7 @@
             btnDeleteAttendance = new Button();
             btnEditAttendance = new Button();
             btnAddAttendance = new Button();
+            dgvAttendance = new DataGridView();
             tabOvertime = new TabPage();
             btnDeleteOT = new Button();
             btnEditOT = new Button();
@@ -55,16 +54,15 @@
             btnEditDeduction = new Button();
             btnAddDeduction = new Button();
             tabPayrollSlipRecord = new TabPage();
-            dgvAttendance = new DataGridView();
             dgvPayrollSlipRecord = new DataGridView();
             ((System.ComponentModel.ISupportInitialize)dgvOvertime).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvDeduction).BeginInit();
             tabControl.SuspendLayout();
             tabAttendance.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvAttendance).BeginInit();
             tabOvertime.SuspendLayout();
             tabDeductions.SuspendLayout();
             tabPayrollSlipRecord.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvAttendance).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvPayrollSlipRecord).BeginInit();
             SuspendLayout();
             // 
@@ -121,24 +119,6 @@
             label2.Size = new Size(39, 15);
             label2.TabIndex = 18;
             label2.Text = "Name";
-            // 
-            // cmPeriods
-            // 
-            cmPeriods.Font = new Font("Segoe UI", 12F);
-            cmPeriods.FormattingEnabled = true;
-            cmPeriods.Location = new Point(608, 32);
-            cmPeriods.Name = "cmPeriods";
-            cmPeriods.Size = new Size(184, 29);
-            cmPeriods.TabIndex = 21;
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new Point(608, 8);
-            label4.Name = "label4";
-            label4.Size = new Size(46, 15);
-            label4.TabIndex = 20;
-            label4.Text = "Periods";
             // 
             // dgvOvertime
             // 
@@ -236,6 +216,14 @@
             btnAddAttendance.Text = "Add";
             btnAddAttendance.UseVisualStyleBackColor = true;
             // 
+            // dgvAttendance
+            // 
+            dgvAttendance.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvAttendance.Location = new Point(8, 8);
+            dgvAttendance.Name = "dgvAttendance";
+            dgvAttendance.Size = new Size(952, 280);
+            dgvAttendance.TabIndex = 22;
+            // 
             // tabOvertime
             // 
             tabOvertime.Controls.Add(btnDeleteOT);
@@ -329,14 +317,6 @@
             tabPayrollSlipRecord.Text = "Payroll Slip Record";
             tabPayrollSlipRecord.UseVisualStyleBackColor = true;
             // 
-            // dgvAttendance
-            // 
-            dgvAttendance.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvAttendance.Location = new Point(8, 8);
-            dgvAttendance.Name = "dgvAttendance";
-            dgvAttendance.Size = new Size(952, 280);
-            dgvAttendance.TabIndex = 22;
-            // 
             // dgvPayrollSlipRecord
             // 
             dgvPayrollSlipRecord.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -354,8 +334,6 @@
             Controls.Add(btnRefresh);
             Controls.Add(btnClear);
             Controls.Add(btnFilter);
-            Controls.Add(cmPeriods);
-            Controls.Add(label4);
             Controls.Add(cmbName);
             Controls.Add(label2);
             Controls.Add(cmbPos);
@@ -369,10 +347,10 @@
             ((System.ComponentModel.ISupportInitialize)dgvDeduction).EndInit();
             tabControl.ResumeLayout(false);
             tabAttendance.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvAttendance).EndInit();
             tabOvertime.ResumeLayout(false);
             tabDeductions.ResumeLayout(false);
             tabPayrollSlipRecord.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvAttendance).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvPayrollSlipRecord).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -386,8 +364,6 @@
         private ComboBox cmbPos;
         private ComboBox cmbName;
         private Label label2;
-        private ComboBox cmPeriods;
-        private Label label4;
         private DataGridView dgvOvertime;
         private DataGridView dgvDeduction;
         private Button btnFilter;
