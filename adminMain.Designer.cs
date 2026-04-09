@@ -39,6 +39,7 @@
             btnAddEmplyee = new Button();
             btnAttendance = new Button();
             panel1 = new Panel();
+            btnSQL = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -135,12 +136,22 @@
             // panel1
             // 
             panel1.BackColor = Color.FromArgb(128, 128, 255);
+            panel1.Controls.Add(btnSQL);
             panel1.Controls.Add(btnAddEmplyee);
             panel1.Controls.Add(btnAttendance);
             panel1.Location = new Point(8, 120);
             panel1.Name = "panel1";
             panel1.Size = new Size(224, 504);
             panel1.TabIndex = 0;
+            // 
+            // btnSQL
+            // 
+            btnSQL.Location = new Point(0, 200);
+            btnSQL.Name = "btnSQL";
+            btnSQL.Size = new Size(224, 64);
+            btnSQL.TabIndex = 38;
+            btnSQL.Text = "Access to MySQL\r\n";
+            btnSQL.UseVisualStyleBackColor = true;
             // 
             // adminMain
             // 
@@ -179,5 +190,6 @@
         private Button btnAddEmplyee;
         private Button btnAttendance;
         private Panel panel1;
+        private Button btnSQL;
     }
 }

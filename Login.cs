@@ -80,5 +80,11 @@ namespace Payroll__C__
             MessageBox.Show("Forgot Password feature not implemented yet.");
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            adminMain adminForm = new adminMain();
+            adminForm.Show();
+            this.Hide();
+        }
     }
 }

@@ -39,6 +39,7 @@
             btnLogin = new Button();
             label3 = new Label();
             label4 = new Label();
+            button1 = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             SuspendLayout();
@@ -148,11 +149,23 @@
             label4.TabIndex = 10;
             label4.Text = "Password";
             // 
+            // button1
+            // 
+            button1.Font = new Font("Segoe UI", 12F);
+            button1.Location = new Point(960, 432);
+            button1.Name = "button1";
+            button1.Size = new Size(136, 40);
+            button1.TabIndex = 11;
+            button1.Text = "Admin";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
             // Login
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1264, 681);
+            Controls.Add(button1);
             Controls.Add(label4);
             Controls.Add(label3);
             Controls.Add(btnLogin);
@@ -184,5 +197,6 @@
         private Button btnLogin;
         private Label label3;
         private Label label4;
+        private Button button1;
     }
 }
