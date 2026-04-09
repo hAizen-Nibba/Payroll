@@ -7,11 +7,25 @@ C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows7.
 C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows7.0\Payroll (C#).AssemblyInfoInputs.cache
 C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows7.0\Payroll (C#).AssemblyInfo.cs
 C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows7.0\Payroll (C#).csproj.CoreCompileInputs.cache
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows7.0\Payroll (C#).sourcelink.json
 C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\Payroll (C#).exe
 C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\Payroll (C#).deps.json
 C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\Payroll (C#).runtimeconfig.json
 C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\Payroll (C#).dll
 C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\Payroll (C#).pdb
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\BouncyCastle.Cryptography.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\Google.Protobuf.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\K4os.Compression.LZ4.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\K4os.Compression.LZ4.Streams.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\K4os.Hash.xxHash.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\MySql.Data.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\System.IO.Pipelines.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\ZstdSharp.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\runtimes\win-x64\native\comerr64.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\runtimes\win-x64\native\gssapi64.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\runtimes\win-x64\native\k5sprt64.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\runtimes\win-x64\native\krb5_64.dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\runtimes\win-x64\native\krbcc64.dll
 C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\CrystalDecisions.CrystalReports.Engine.dll
 C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\CrystalDecisions.ReportSource.dll
 C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\bin\Debug\net8.0-windows7.0\CrystalDecisions.Shared.dll
@@ -34,3 +48,4 @@ C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows7.
 C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows7.0\Payroll (C#).pdb
 C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows7.0\Payroll (C#).genruntimeconfig.cache
 C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows7.0\ref\Payroll (C#).dll
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows7.0\Payroll__C__.PreviewSlip.resources
