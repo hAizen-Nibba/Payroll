@@ -49,3 +49,5 @@ C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows7.
 C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows7.0\Payroll (C#).genruntimeconfig.cache
 C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows7.0\ref\Payroll (C#).dll
 C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows7.0\Payroll__C__.PreviewSlip.resources
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows7.0\Payroll__C__.adminMain.resources
+C:\Users\otg99\source\repos\Payroll (C#)\Payroll (C#)\obj\Debug\net8.0-windows7.0\Payroll__C__.adminPayrollForm.resources

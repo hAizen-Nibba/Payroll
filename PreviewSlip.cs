@@ -23,8 +23,10 @@ namespace Payroll__C__
         private string department = "";
         private string position = "";
         private string payDate = "";
-        private decimal basicSalary = 0m;
-        private decimal totalEarnings = 0m;
+        private decimal monthlySalary = 0m;
+        private decimal basicPay = 0m;
+        private decimal additionalEarnings = 0m;
+        private decimal grossPay = 0m;
         private decimal totalDeductions = 0m;
         private decimal netPay = 0m;
 
@@ -107,61 +109,87 @@ namespace Payroll__C__
             {
                 conn.Open();
 
-                // Get employee basic salary from positions table
-                string salaryQuery = @"
+                // 1) Monthly salary from position
+                string monthlySalaryQuery = @"
             SELECT COALESCE(p.basic_salary, 0)
             FROM employees e
             INNER JOIN positions p ON e.pos_id = p.pos_id
             WHERE e.emp_id = @emp_id
             LIMIT 1;";
 
-                using (MySqlCommand cmd = new MySqlCommand(salaryQuery, conn))
+                using (MySqlCommand cmd = new MySqlCommand(monthlySalaryQuery, conn))
                 {
                     cmd.Parameters.AddWithValue("@emp_id", empId);
                     object result = cmd.ExecuteScalar();
-                    basicSalary = result != null && result != DBNull.Value
+                    monthlySalary = result != null && result != DBNull.Value
                         ? Convert.ToDecimal(result)
                         : 0m;
                 }
 
-                // Total earnings for selected payroll period
-                string earningsQuery = @"
+                // 2) Basic Pay only
+                string basicPayQuery = @"
             SELECT COALESCE(SUM(pei.amount), 0)
             FROM payroll_earning_items pei
             INNER JOIN payroll_slip_record psr ON pei.pay_rec_id = psr.pay_rec_id
             WHERE psr.emp_id = @emp_id
-              AND psr.payroll_id = @payroll_id;";
+              AND psr.payroll_id = @payroll_id
+              AND pei.earn_type = 'Basic Pay';";
 
-                using (MySqlCommand cmd = new MySqlCommand(earningsQuery, conn))
+                using (MySqlCommand cmd = new MySqlCommand(basicPayQuery, conn))
                 {
                     cmd.Parameters.AddWithValue("@emp_id", empId);
                     cmd.Parameters.AddWithValue("@payroll_id", payrollId);
                     object result = cmd.ExecuteScalar();
-                    totalEarnings = result != null && result != DBNull.Value
+                    basicPay = result != null && result != DBNull.Value
                         ? Convert.ToDecimal(result)
                         : 0m;
                 }
 
-                // Total deductions for selected payroll period
-                string deductionsQuery = @"
-            SELECT COALESCE(SUM(pdi.amount), 0)
-            FROM payroll_deduction_items pdi
-            INNER JOIN payroll_slip_record psr ON pdi.pay_rec_id = psr.pay_rec_id
+                // 3) Additional earnings only (exclude Basic Pay)
+                string additionalEarningsQuery = @"
+            SELECT COALESCE(SUM(pei.amount), 0)
+            FROM payroll_earning_items pei
+            INNER JOIN payroll_slip_record psr ON pei.pay_rec_id = psr.pay_rec_id
             WHERE psr.emp_id = @emp_id
-              AND psr.payroll_id = @payroll_id;";
+              AND psr.payroll_id = @payroll_id
+              AND pei.earn_type <> 'Basic Pay';";
 
-                using (MySqlCommand cmd = new MySqlCommand(deductionsQuery, conn))
+                using (MySqlCommand cmd = new MySqlCommand(additionalEarningsQuery, conn))
                 {
                     cmd.Parameters.AddWithValue("@emp_id", empId);
                     cmd.Parameters.AddWithValue("@payroll_id", payrollId);
                     object result = cmd.ExecuteScalar();
-                    totalDeductions = result != null && result != DBNull.Value
+                    additionalEarnings = result != null && result != DBNull.Value
                         ? Convert.ToDecimal(result)
                         : 0m;
                 }
 
-                // Compute net pay
-                netPay = basicSalary + totalEarnings - totalDeductions;
+                // 4) Gross pay, deductions, net pay from payroll_slip_record
+                string payrollSummaryQuery = @"
+            SELECT 
+                COALESCE(psr.gross_pay, 0),
+                COALESCE(psr.total_deduction, 0),
+                COALESCE(psr.net_pay, 0)
+            FROM payroll_slip_record psr
+            WHERE psr.emp_id = @emp_id
+              AND psr.payroll_id = @payroll_id
+            LIMIT 1;";
+
+                using (MySqlCommand cmd = new MySqlCommand(payrollSummaryQuery, conn))
+                {
+                    cmd.Parameters.AddWithValue("@emp_id", empId);
+                    cmd.Parameters.AddWithValue("@payroll_id", payrollId);
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            grossPay = Convert.ToDecimal(reader[0]);
+                            totalDeductions = Convert.ToDecimal(reader[1]);
+                            netPay = Convert.ToDecimal(reader[2]);
+                        }
+                    }
+                }
             }
         }
 
@@ -219,12 +247,20 @@ namespace Payroll__C__
             g.DrawString("Salary Details", sectionFont, Brushes.Black, left, y);
             y += 30;
 
-            g.DrawString("Basic Salary:", headerFont, Brushes.Black, left, y);
-            g.DrawString("₱" + basicSalary.ToString("N2"), bodyFont, Brushes.Black, left + 160, y);
+            g.DrawString("Monthly Salary:", headerFont, Brushes.Black, left, y);
+            g.DrawString("₱" + monthlySalary.ToString("N2"), bodyFont, Brushes.Black, left + 160, y);
+            y += 28;
+
+            g.DrawString("Basic Pay:", headerFont, Brushes.Black, left, y);
+            g.DrawString("₱" + basicPay.ToString("N2"), bodyFont, Brushes.Black, left + 160, y);
             y += 28;
 
             g.DrawString("Additional Earnings:", headerFont, Brushes.Black, left, y);
-            g.DrawString("₱" + totalEarnings.ToString("N2"), bodyFont, Brushes.Black, left + 160, y);
+            g.DrawString("₱" + additionalEarnings.ToString("N2"), bodyFont, Brushes.Black, left + 160, y);
+            y += 28;
+
+            g.DrawString("Gross Pay:", headerFont, Brushes.Black, left, y);
+            g.DrawString("₱" + grossPay.ToString("N2"), bodyFont, Brushes.Black, left + 160, y);
             y += 28;
 
             g.DrawString("Total Deductions:", headerFont, Brushes.Black, left, y);
