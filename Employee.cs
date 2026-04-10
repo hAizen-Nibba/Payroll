@@ -13,17 +13,54 @@ namespace Payroll__C__
 
         private int loggedInEmpId;
         private string loggedInEmployeeName = string.Empty;
+        private bool isExiting = false;
 
         public Employee(int empId, string employeeName)
         {
             InitializeComponent();
+            this.FormClosing += Employee_FormClosing;
+
             loggedInEmpId = empId;
             loggedInEmployeeName = employeeName;
         }
 
-        public Employee()
+        private bool ConfirmExit()
         {
-            InitializeComponent();
+            DialogResult result = MessageBox.Show(
+                "Are you sure you want to log out?",
+                "Logout",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            return result == DialogResult.Yes;
+        }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            if (ConfirmExit())
+            {
+                isExiting = true;
+                Application.Exit();
+            }
+        }
+
+        private void Employee_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (isExiting)
+                return;
+
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                if (ConfirmExit())
+                {
+                    isExiting = true;
+                    Application.Exit();
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            }
         }
 
         private void Employee_Load(object? sender, EventArgs e)
@@ -225,21 +262,6 @@ namespace Payroll__C__
             }
 
             return dt;
-        }
-
-        private void btnBack_Click(object? sender, EventArgs e)
-        {
-            DialogResult result = MessageBox.Show(
-                "Are you sure you want to exit the application?",
-                "Confirm Exit",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning
-            );
-
-            if (result == DialogResult.Yes)
-            {
-                Application.Exit();
-            }
         }
 
         private void btnPreviewPayslip_Click(object sender, EventArgs e)

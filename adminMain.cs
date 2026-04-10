@@ -6,10 +6,13 @@ namespace Payroll__C__
     public partial class adminMain : Form
     {
         private Form activeForm = null;
+        private bool isExiting = false;
 
         public adminMain()
         {
             InitializeComponent();
+
+            this.FormClosing += adminMain_FormClosing;
 
             // Wire button events
             btnAttendance.Click += btnAttendance_Click;
@@ -38,7 +41,7 @@ namespace Payroll__C__
             childForm.Show();
         }
 
-        private void btnAttendance_Click(object sender, EventArgs e)
+        private void btnAttendance_Click(object sender, EventArgs e) 
         {
             OpenChildForm(new adminPayrollForm());
         }
@@ -55,7 +58,7 @@ namespace Payroll__C__
             MessageBox.Show("This button is for MySQL access. Add your logic here.");
         }
 
-        private void btnBack_Click(object sender, EventArgs e)
+        private bool ConfirmExit()
         {
             DialogResult result = MessageBox.Show(
                 "Are you sure you want to log out?",
@@ -63,8 +66,26 @@ namespace Payroll__C__
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
 
-            if (result == DialogResult.Yes)
+            return result == DialogResult.Yes;
+        }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            if (ConfirmExit())
             {
+                isExiting = true;
+                Application.Exit();
+            }
+        }
+
+        private void adminMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (isExiting)
+                return;
+
+            if (!ConfirmExit())
+            {
+                e.Cancel = true;
                 Application.Exit();
             }
         }
