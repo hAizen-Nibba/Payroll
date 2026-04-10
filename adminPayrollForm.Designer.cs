@@ -40,6 +40,7 @@
             btnClear = new Button();
             btnRefresh = new Button();
             tabControl = new TabControl();
+            tabPeriods = new TabPage();
             tabAttendance = new TabPage();
             btnDeleteAttendance = new Button();
             btnEditAttendance = new Button();
@@ -55,15 +56,18 @@
             btnAddDeduction = new Button();
             tabPayrollSlipRecord = new TabPage();
             dgvPayrollSlipRecord = new DataGridView();
+            dgvPeriods = new DataGridView();
             ((System.ComponentModel.ISupportInitialize)dgvOvertime).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvDeduction).BeginInit();
             tabControl.SuspendLayout();
+            tabPeriods.SuspendLayout();
             tabAttendance.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvAttendance).BeginInit();
             tabOvertime.SuspendLayout();
             tabDeductions.SuspendLayout();
             tabPayrollSlipRecord.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvPayrollSlipRecord).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvPeriods).BeginInit();
             SuspendLayout();
             // 
             // label3
@@ -165,6 +169,7 @@
             // 
             // tabControl
             // 
+            tabControl.Controls.Add(tabPeriods);
             tabControl.Controls.Add(tabAttendance);
             tabControl.Controls.Add(tabOvertime);
             tabControl.Controls.Add(tabDeductions);
@@ -174,6 +179,17 @@
             tabControl.SelectedIndex = 0;
             tabControl.Size = new Size(976, 440);
             tabControl.TabIndex = 34;
+            // 
+            // tabPeriods
+            // 
+            tabPeriods.Controls.Add(dgvPeriods);
+            tabPeriods.Location = new Point(4, 24);
+            tabPeriods.Name = "tabPeriods";
+            tabPeriods.Padding = new Padding(3);
+            tabPeriods.Size = new Size(968, 412);
+            tabPeriods.TabIndex = 4;
+            tabPeriods.Text = "Periods";
+            tabPeriods.UseVisualStyleBackColor = true;
             // 
             // tabAttendance
             // 
@@ -325,6 +341,14 @@
             dgvPayrollSlipRecord.Size = new Size(952, 392);
             dgvPayrollSlipRecord.TabIndex = 0;
             // 
+            // dgvPeriods
+            // 
+            dgvPeriods.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvPeriods.Location = new Point(8, 8);
+            dgvPeriods.Name = "dgvPeriods";
+            dgvPeriods.Size = new Size(952, 392);
+            dgvPeriods.TabIndex = 0;
+            // 
             // adminPayrollForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -346,12 +370,14 @@
             ((System.ComponentModel.ISupportInitialize)dgvOvertime).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvDeduction).EndInit();
             tabControl.ResumeLayout(false);
+            tabPeriods.ResumeLayout(false);
             tabAttendance.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvAttendance).EndInit();
             tabOvertime.ResumeLayout(false);
             tabDeductions.ResumeLayout(false);
             tabPayrollSlipRecord.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvPayrollSlipRecord).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvPeriods).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -370,6 +396,7 @@
         private Button btnClear;
         private Button btnRefresh;
         private TabControl tabControl;
+        private TabPage tabPeriods;
         private TabPage tabAttendance;
         private TabPage tabOvertime;
         private TabPage tabDeductions;
@@ -385,5 +412,6 @@
         private TabPage tabPayrollSlipRecord;
         private DataGridView dgvAttendance;
         private DataGridView dgvPayrollSlipRecord;
+        private DataGridView dgvPeriods;
     }
 }
