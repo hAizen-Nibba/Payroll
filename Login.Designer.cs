@@ -39,7 +39,6 @@
             btnLogin = new Button();
             label3 = new Label();
             label4 = new Label();
-            button1 = new Button();
             radShowPass = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
@@ -150,17 +149,6 @@
             label4.TabIndex = 10;
             label4.Text = "Password";
             // 
-            // button1
-            // 
-            button1.Font = new Font("Segoe UI", 12F);
-            button1.Location = new Point(960, 464);
-            button1.Name = "button1";
-            button1.Size = new Size(136, 40);
-            button1.TabIndex = 11;
-            button1.Text = "Admin";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
-            // 
             // radShowPass
             // 
             radShowPass.AutoSize = true;
@@ -178,7 +166,6 @@
             ClientSize = new Size(1264, 681);
             Controls.Add(radShowPass);
             Controls.Add(label1);
-            Controls.Add(button1);
             Controls.Add(label4);
             Controls.Add(label3);
             Controls.Add(btnLogin);
@@ -209,7 +196,6 @@
         private Button btnLogin;
         private Label label3;
         private Label label4;
-        private Button button1;
         private CheckBox radShowPass;
     }
 }

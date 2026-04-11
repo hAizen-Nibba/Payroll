@@ -46,7 +46,6 @@ namespace Payroll__C__
         {
             string inputName = txtbxName.Text.Trim();
             string rawPassword = txtbxPass.Text.Trim();
-            string inputPassword = HashPassword(rawPassword);
 
             if (string.IsNullOrWhiteSpace(inputName) || string.IsNullOrWhiteSpace(rawPassword))
             {
@@ -55,15 +54,28 @@ namespace Payroll__C__
                 return;
             }
 
+            // Admin login check first
+            if (inputName.Equals("admin", StringComparison.OrdinalIgnoreCase) &&
+                rawPassword == "teamcoapal")
+            {
+                adminMain adminForm = new adminMain();
+                adminForm.Show();
+                this.Hide();
+                return;
+            }
+
+            // Employee login
+            string inputPassword = HashPassword(rawPassword);
+
             string query = @"
-                SELECT 
-                e.emp_id,
-                CONCAT(e.f_name, ' ', e.l_name) AS full_name
-            FROM employees e
-            INNER JOIN security s ON e.emp_id = s.emp_id
-            WHERE LOWER(TRIM(CONCAT(e.f_name, ' ', e.l_name))) = LOWER(TRIM(@full_name))
-              AND s.password = @password
-            LIMIT 1;";
+        SELECT 
+            e.emp_id,
+            CONCAT(e.f_name, ' ', e.l_name) AS full_name
+        FROM employees e
+        INNER JOIN security s ON e.emp_id = s.emp_id
+        WHERE LOWER(TRIM(CONCAT(e.f_name, ' ', e.l_name))) = LOWER(TRIM(@full_name))
+          AND s.password = @password
+        LIMIT 1;";
 
             try
             {
@@ -104,13 +116,6 @@ namespace Payroll__C__
         private void btnForgotPass_Click(object? sender, EventArgs e)
         {
             MessageBox.Show("Forgot Password feature not implemented yet.");
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            adminMain adminForm = new adminMain();
-            adminForm.Show();
-            this.Hide();
         }
     }
 }
