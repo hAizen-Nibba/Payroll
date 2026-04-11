@@ -40,8 +40,25 @@
             label3 = new Label();
             label4 = new Label();
             radShowPass = new CheckBox();
+            panelForgotPass = new Panel();
+            btnSecAnsConfirmed = new Button();
+            btnCancelForgot = new Button();
+            button2 = new Button();
+            radShowPassForPass = new CheckBox();
+            button1 = new Button();
+            label9 = new Label();
+            txtbConfNewPass = new TextBox();
+            label8 = new Label();
+            txtbNewPass = new TextBox();
+            label7 = new Label();
+            txtbxSecAns = new TextBox();
+            label6 = new Label();
+            txtbSecQues = new TextBox();
+            label5 = new Label();
+            txtbxNameForPass = new TextBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
+            panelForgotPass.SuspendLayout();
             SuspendLayout();
             // 
             // pictureBox1
@@ -159,11 +176,184 @@
             radShowPass.Text = "Show Password";
             radShowPass.UseVisualStyleBackColor = true;
             // 
+            // panelForgotPass
+            // 
+            panelForgotPass.Controls.Add(btnSecAnsConfirmed);
+            panelForgotPass.Controls.Add(btnCancelForgot);
+            panelForgotPass.Controls.Add(button2);
+            panelForgotPass.Controls.Add(radShowPassForPass);
+            panelForgotPass.Controls.Add(button1);
+            panelForgotPass.Controls.Add(label9);
+            panelForgotPass.Controls.Add(txtbConfNewPass);
+            panelForgotPass.Controls.Add(label8);
+            panelForgotPass.Controls.Add(txtbNewPass);
+            panelForgotPass.Controls.Add(label7);
+            panelForgotPass.Controls.Add(txtbxSecAns);
+            panelForgotPass.Controls.Add(label6);
+            panelForgotPass.Controls.Add(txtbSecQues);
+            panelForgotPass.Controls.Add(label5);
+            panelForgotPass.Controls.Add(txtbxNameForPass);
+            panelForgotPass.Location = new Point(768, 0);
+            panelForgotPass.Name = "panelForgotPass";
+            panelForgotPass.Size = new Size(496, 688);
+            panelForgotPass.TabIndex = 14;
+            // 
+            // btnSecAnsConfirmed
+            // 
+            btnSecAnsConfirmed.BackColor = SystemColors.Control;
+            btnSecAnsConfirmed.Font = new Font("Segoe UI", 12F);
+            btnSecAnsConfirmed.ForeColor = Color.Black;
+            btnSecAnsConfirmed.Location = new Point(304, 400);
+            btnSecAnsConfirmed.Name = "btnSecAnsConfirmed";
+            btnSecAnsConfirmed.Size = new Size(112, 40);
+            btnSecAnsConfirmed.TabIndex = 23;
+            btnSecAnsConfirmed.Text = "Okay";
+            btnSecAnsConfirmed.UseVisualStyleBackColor = false;
+            // 
+            // btnCancelForgot
+            // 
+            btnCancelForgot.BackColor = SystemColors.Control;
+            btnCancelForgot.Font = new Font("Segoe UI", 12F);
+            btnCancelForgot.ForeColor = Color.Black;
+            btnCancelForgot.Location = new Point(288, 616);
+            btnCancelForgot.Name = "btnCancelForgot";
+            btnCancelForgot.Size = new Size(128, 40);
+            btnCancelForgot.TabIndex = 22;
+            btnCancelForgot.Text = "Back";
+            btnCancelForgot.UseVisualStyleBackColor = false;
+            btnCancelForgot.Click += btnCancelForgot_Click;
+            // 
+            // button2
+            // 
+            button2.BackColor = SystemColors.Control;
+            button2.Font = new Font("Segoe UI", 12F);
+            button2.ForeColor = Color.Black;
+            button2.Location = new Point(312, 88);
+            button2.Name = "button2";
+            button2.Size = new Size(104, 40);
+            button2.TabIndex = 21;
+            button2.Text = "Okay";
+            button2.UseVisualStyleBackColor = false;
+            // 
+            // radShowPassForPass
+            // 
+            radShowPassForPass.AutoSize = true;
+            radShowPassForPass.Location = new Point(304, 520);
+            radShowPassForPass.Name = "radShowPassForPass";
+            radShowPassForPass.Size = new Size(108, 19);
+            radShowPassForPass.TabIndex = 20;
+            radShowPassForPass.Text = "Show Password";
+            radShowPassForPass.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            button1.BackColor = Color.DodgerBlue;
+            button1.Font = new Font("Segoe UI", 12F);
+            button1.ForeColor = Color.White;
+            button1.Location = new Point(80, 616);
+            button1.Name = "button1";
+            button1.Size = new Size(200, 40);
+            button1.TabIndex = 15;
+            button1.Text = "Confirm";
+            button1.UseVisualStyleBackColor = false;
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new Point(80, 544);
+            label9.Name = "label9";
+            label9.Size = new Size(131, 15);
+            label9.TabIndex = 19;
+            label9.Text = "Confirm New Password";
+            // 
+            // txtbConfNewPass
+            // 
+            txtbConfNewPass.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtbConfNewPass.Location = new Point(80, 568);
+            txtbConfNewPass.Name = "txtbConfNewPass";
+            txtbConfNewPass.Size = new Size(336, 35);
+            txtbConfNewPass.TabIndex = 18;
+            txtbConfNewPass.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(80, 456);
+            label8.Name = "label8";
+            label8.Size = new Size(84, 15);
+            label8.TabIndex = 17;
+            label8.Text = "New Password";
+            // 
+            // txtbNewPass
+            // 
+            txtbNewPass.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtbNewPass.Location = new Point(80, 480);
+            txtbNewPass.Name = "txtbNewPass";
+            txtbNewPass.Size = new Size(336, 35);
+            txtbNewPass.TabIndex = 16;
+            txtbNewPass.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(80, 336);
+            label7.Name = "label7";
+            label7.Size = new Size(91, 15);
+            label7.TabIndex = 15;
+            label7.Text = "Security Answer";
+            // 
+            // txtbxSecAns
+            // 
+            txtbxSecAns.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtbxSecAns.Location = new Point(80, 360);
+            txtbxSecAns.Name = "txtbxSecAns";
+            txtbxSecAns.Size = new Size(336, 35);
+            txtbxSecAns.TabIndex = 14;
+            txtbxSecAns.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(80, 136);
+            label6.Name = "label6";
+            label6.Size = new Size(104, 15);
+            label6.TabIndex = 13;
+            label6.Text = "Security Questiom";
+            // 
+            // txtbSecQues
+            // 
+            txtbSecQues.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtbSecQues.Location = new Point(80, 160);
+            txtbSecQues.Multiline = true;
+            txtbSecQues.Name = "txtbSecQues";
+            txtbSecQues.Size = new Size(336, 168);
+            txtbSecQues.TabIndex = 12;
+            txtbSecQues.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(80, 24);
+            label5.Name = "label5";
+            label5.Size = new Size(39, 15);
+            label5.TabIndex = 11;
+            label5.Text = "Name";
+            // 
+            // txtbxNameForPass
+            // 
+            txtbxNameForPass.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtbxNameForPass.Location = new Point(80, 48);
+            txtbxNameForPass.Name = "txtbxNameForPass";
+            txtbxNameForPass.Size = new Size(336, 35);
+            txtbxNameForPass.TabIndex = 10;
+            txtbxNameForPass.TextAlign = HorizontalAlignment.Center;
+            // 
             // Login
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1264, 681);
+            Controls.Add(panelForgotPass);
             Controls.Add(radShowPass);
             Controls.Add(label1);
             Controls.Add(label4);
@@ -181,6 +371,8 @@
             Text = "Login";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
+            panelForgotPass.ResumeLayout(false);
+            panelForgotPass.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -197,5 +389,21 @@
         private Label label3;
         private Label label4;
         private CheckBox radShowPass;
+        private Panel panelForgotPass;
+        private Label label9;
+        private TextBox txtbConfNewPass;
+        private Label label8;
+        private TextBox txtbNewPass;
+        private Label label7;
+        private TextBox txtbxSecAns;
+        private Label label6;
+        private TextBox txtbSecQues;
+        private Label label5;
+        private TextBox txtbxNameForPass;
+        private CheckBox radShowPassForPass;
+        private Button button1;
+        private Button button2;
+        private Button btnCancelForgot;
+        private Button btnSecAnsConfirmed;
     }
 }
