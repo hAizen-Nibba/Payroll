@@ -1,6 +1,8 @@
 using MySql.Data.MySqlClient;
 using System;
 using System.Windows.Forms;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Payroll__C__
 {
@@ -15,14 +17,38 @@ namespace Payroll__C__
 
             btnLogin.Click += btnLogin_Click;
             btnForgotPass.Click += btnForgotPass_Click;
+
+            txtbxPass.UseSystemPasswordChar = true;
+
+            radShowPass.CheckedChanged += radShowPass_CheckedChanged;
+        }
+
+        private void radShowPass_CheckedChanged(object? sender, EventArgs e)
+        {
+            txtbxPass.UseSystemPasswordChar = !radShowPass.Checked;
+        }
+
+        private string HashPassword(string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                StringBuilder sb = new StringBuilder();
+
+                foreach (byte b in bytes)
+                    sb.Append(b.ToString("x2"));
+
+                return sb.ToString();
+            }
         }
 
         private void btnLogin_Click(object? sender, EventArgs e)
         {
             string inputName = txtbxName.Text.Trim();
-            string inputPassword = txtbxPass.Text.Trim();
+            string rawPassword = txtbxPass.Text.Trim();
+            string inputPassword = HashPassword(rawPassword);
 
-            if (string.IsNullOrWhiteSpace(inputName) || string.IsNullOrWhiteSpace(inputPassword))
+            if (string.IsNullOrWhiteSpace(inputName) || string.IsNullOrWhiteSpace(rawPassword))
             {
                 MessageBox.Show("Please enter your name and password.", "Missing Input",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -31,13 +57,13 @@ namespace Payroll__C__
 
             string query = @"
                 SELECT 
-                    e.emp_id,
-                    CONCAT(e.f_name, ' ', e.l_name) AS full_name
-                FROM employees e
-                INNER JOIN security s ON e.emp_id = s.emp_id
-                WHERE CONCAT(e.f_name, ' ', e.l_name) = @full_name
-                  AND s.password = @password
-                LIMIT 1;";
+                e.emp_id,
+                CONCAT(e.f_name, ' ', e.l_name) AS full_name
+            FROM employees e
+            INNER JOIN security s ON e.emp_id = s.emp_id
+            WHERE LOWER(TRIM(CONCAT(e.f_name, ' ', e.l_name))) = LOWER(TRIM(@full_name))
+              AND s.password = @password
+            LIMIT 1;";
 
             try
             {

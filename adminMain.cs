@@ -48,9 +48,7 @@ namespace Payroll__C__
 
         private void btnAddEmplyee_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Create your AddEmployeeForm first, then load it here.");
-            // Example later:
-            // OpenChildForm(new AddEmployeeForm());
+            OpenChildForm(new adminNewEmployee());
         }
 
         private void btnSQL_Click(object sender, EventArgs e)
@@ -83,10 +81,17 @@ namespace Payroll__C__
             if (isExiting)
                 return;
 
-            if (!ConfirmExit())
+            if (e.CloseReason == CloseReason.UserClosing)
             {
-                e.Cancel = true;
-                Application.Exit();
+                if (ConfirmExit())
+                {
+                    isExiting = true;
+                    Application.Exit();
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
             }
         }
     }

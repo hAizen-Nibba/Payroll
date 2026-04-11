@@ -40,6 +40,7 @@
             label3 = new Label();
             label4 = new Label();
             button1 = new Button();
+            radShowPass = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             SuspendLayout();
@@ -94,7 +95,7 @@
             // btnForgotPass
             // 
             btnForgotPass.Font = new Font("Segoe UI", 12F);
-            btnForgotPass.Location = new Point(1056, 376);
+            btnForgotPass.Location = new Point(1056, 408);
             btnForgotPass.Name = "btnForgotPass";
             btnForgotPass.Size = new Size(136, 40);
             btnForgotPass.TabIndex = 5;
@@ -124,7 +125,7 @@
             btnLogin.BackColor = Color.DodgerBlue;
             btnLogin.Font = new Font("Segoe UI", 12F);
             btnLogin.ForeColor = Color.White;
-            btnLogin.Location = new Point(856, 376);
+            btnLogin.Location = new Point(856, 408);
             btnLogin.Name = "btnLogin";
             btnLogin.Size = new Size(200, 40);
             btnLogin.TabIndex = 8;
@@ -152,7 +153,7 @@
             // button1
             // 
             button1.Font = new Font("Segoe UI", 12F);
-            button1.Location = new Point(960, 432);
+            button1.Location = new Point(960, 464);
             button1.Name = "button1";
             button1.Size = new Size(136, 40);
             button1.TabIndex = 11;
@@ -160,11 +161,22 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
+            // radShowPass
+            // 
+            radShowPass.AutoSize = true;
+            radShowPass.Location = new Point(1080, 376);
+            radShowPass.Name = "radShowPass";
+            radShowPass.Size = new Size(108, 19);
+            radShowPass.TabIndex = 13;
+            radShowPass.Text = "Show Password";
+            radShowPass.UseVisualStyleBackColor = true;
+            // 
             // Login
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1264, 681);
+            Controls.Add(radShowPass);
             Controls.Add(label1);
             Controls.Add(button1);
             Controls.Add(label4);
@@ -198,5 +210,6 @@
         private Label label3;
         private Label label4;
         private Button button1;
+        private CheckBox radShowPass;
     }
 }

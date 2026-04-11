@@ -6,7 +6,7 @@ using MySql.Data.MySqlClient;
 public static class DbConnection
 {
     // Change this based on your MySQL setup
-    public static string ConnectionString = "server=localhost;userid=root;password=;database=your_database_name;";
+    public static string ConnectionString = "server=localhost;userid=root;password=;database=payrolldb_test;";
     public static MySqlConnection Conn = new MySqlConnection(ConnectionString);
 
     public static void OpenConnection()
