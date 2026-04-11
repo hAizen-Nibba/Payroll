@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace Payroll__C__
@@ -41,7 +42,7 @@ namespace Payroll__C__
             childForm.Show();
         }
 
-        private void btnAttendance_Click(object sender, EventArgs e) 
+        private void btnAttendance_Click(object sender, EventArgs e)
         {
             OpenChildForm(new adminPayrollForm());
         }
@@ -53,7 +54,19 @@ namespace Payroll__C__
 
         private void btnSQL_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("This button is for MySQL access. Add your logic here.");
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "http://localhost/phpmyadmin",
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to open phpMyAdmin.\n\n" + ex.Message,
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private bool ConfirmExit()
@@ -94,5 +107,6 @@ namespace Payroll__C__
                 }
             }
         }
+
     }
 }
