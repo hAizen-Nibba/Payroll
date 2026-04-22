@@ -16,6 +16,12 @@ namespace Payroll__C__
         private DateTime activePeriodEnd;
         private string activePeriodLabel = "";
 
+        private TabPage attendanceTab;
+        private TabPage overtimeTab;
+        private TabPage deductionTab;
+        private TabPage payrollSlipTab;
+        private List<TabPage> lockedTabs = new List<TabPage>();
+
         private const decimal OVERTIME_RATE_PER_HOUR = 250m;
 
         public adminPayrollForm()
@@ -52,6 +58,37 @@ namespace Payroll__C__
 
             dgvPeriods.SelectionChanged += dgvPeriods_SelectionChanged;
             tabControl.Selecting += tabControl_Selecting;
+
+            lockedTabs = new List<TabPage>();
+
+            foreach (TabPage tab in tabControl.TabPages)
+            {
+                if (tab != tabPeriods)
+                    lockedTabs.Add(tab);
+            }
+        }
+
+        private void UpdateTabAccess()
+        {
+            if (!HasActivePeriod)
+            {
+                foreach (TabPage tab in lockedTabs)
+                {
+                    if (tabControl.TabPages.Contains(tab))
+                        tabControl.TabPages.Remove(tab);
+                }
+
+                if (tabControl.SelectedTab != tabPeriods)
+                    tabControl.SelectedTab = tabPeriods;
+            }
+            else
+            {
+                foreach (TabPage tab in lockedTabs)
+                {
+                    if (!tabControl.TabPages.Contains(tab))
+                        tabControl.TabPages.Add(tab);
+                }
+            }
         }
 
         #region Form Load
@@ -72,6 +109,7 @@ namespace Payroll__C__
 
                 FormatGrids();
                 UpdatePeriodTabCaption();
+                UpdateTabAccess();
             }
             catch (Exception ex)
             {
@@ -260,6 +298,7 @@ namespace Payroll__C__
             activePeriodLabel = $"{activePeriodStart:yyyy-MM-dd} to {activePeriodEnd:yyyy-MM-dd}";
 
             UpdatePeriodTabCaption();
+            UpdateTabAccess();
             LoadAllGrids();
         }
 
@@ -270,6 +309,7 @@ namespace Payroll__C__
             activePeriodEnd = DateTime.MinValue;
             activePeriodLabel = "";
             UpdatePeriodTabCaption();
+            UpdateTabAccess();
             LoadAllGrids();
         }
 
