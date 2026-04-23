@@ -36,38 +36,42 @@
             label2 = new Label();
             dgvOvertime = new DataGridView();
             dgvDeduction = new DataGridView();
-            btnFilter = new Button();
-            btnClear = new Button();
             btnRefresh = new Button();
             tabControl = new TabControl();
             tabPeriods = new TabPage();
+            dgvPeriods = new DataGridView();
             tabAttendance = new TabPage();
+            btnBackAtt = new Button();
+            btnNextAtt = new Button();
             btnDeleteAttendance = new Button();
             btnEditAttendance = new Button();
             btnAddAttendance = new Button();
             dgvAttendance = new DataGridView();
             tabOvertime = new TabPage();
+            btnBackOT = new Button();
+            btnNextOT = new Button();
             btnDeleteOT = new Button();
             btnEditOT = new Button();
             btnAddOT = new Button();
             tabDeductions = new TabPage();
+            btnBackDeduc = new Button();
+            btnNextDeduc = new Button();
             btnDeleteDeduction = new Button();
             btnEditDeduction = new Button();
             btnAddDeduction = new Button();
             tabPayrollSlipRecord = new TabPage();
             dgvPayrollSlipRecord = new DataGridView();
-            dgvPeriods = new DataGridView();
             ((System.ComponentModel.ISupportInitialize)dgvOvertime).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvDeduction).BeginInit();
             tabControl.SuspendLayout();
             tabPeriods.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvPeriods).BeginInit();
             tabAttendance.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvAttendance).BeginInit();
             tabOvertime.SuspendLayout();
             tabDeductions.SuspendLayout();
             tabPayrollSlipRecord.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvPayrollSlipRecord).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dgvPeriods).BeginInit();
             SuspendLayout();
             // 
             // label3
@@ -140,29 +144,11 @@
             dgvDeduction.Size = new Size(952, 280);
             dgvDeduction.TabIndex = 26;
             // 
-            // btnFilter
-            // 
-            btnFilter.Location = new Point(808, 16);
-            btnFilter.Name = "btnFilter";
-            btnFilter.Size = new Size(64, 48);
-            btnFilter.TabIndex = 30;
-            btnFilter.Text = "Filter";
-            btnFilter.UseVisualStyleBackColor = true;
-            // 
-            // btnClear
-            // 
-            btnClear.Location = new Point(880, 40);
-            btnClear.Name = "btnClear";
-            btnClear.Size = new Size(104, 24);
-            btnClear.TabIndex = 31;
-            btnClear.Text = "Clear";
-            btnClear.UseVisualStyleBackColor = true;
-            // 
             // btnRefresh
             // 
-            btnRefresh.Location = new Point(880, 16);
+            btnRefresh.Location = new Point(832, 16);
             btnRefresh.Name = "btnRefresh";
-            btnRefresh.Size = new Size(104, 24);
+            btnRefresh.Size = new Size(136, 56);
             btnRefresh.TabIndex = 32;
             btnRefresh.Text = "Refresh";
             btnRefresh.UseVisualStyleBackColor = true;
@@ -191,8 +177,18 @@
             tabPeriods.Text = "Periods";
             tabPeriods.UseVisualStyleBackColor = true;
             // 
+            // dgvPeriods
+            // 
+            dgvPeriods.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvPeriods.Location = new Point(8, 8);
+            dgvPeriods.Name = "dgvPeriods";
+            dgvPeriods.Size = new Size(952, 392);
+            dgvPeriods.TabIndex = 0;
+            // 
             // tabAttendance
             // 
+            tabAttendance.Controls.Add(btnBackAtt);
+            tabAttendance.Controls.Add(btnNextAtt);
             tabAttendance.Controls.Add(btnDeleteAttendance);
             tabAttendance.Controls.Add(btnEditAttendance);
             tabAttendance.Controls.Add(btnAddAttendance);
@@ -205,9 +201,27 @@
             tabAttendance.Text = "Attendance";
             tabAttendance.UseVisualStyleBackColor = true;
             // 
+            // btnBackAtt
+            // 
+            btnBackAtt.Location = new Point(664, 360);
+            btnBackAtt.Name = "btnBackAtt";
+            btnBackAtt.Size = new Size(144, 40);
+            btnBackAtt.TabIndex = 27;
+            btnBackAtt.Text = "Back";
+            btnBackAtt.UseVisualStyleBackColor = true;
+            // 
+            // btnNextAtt
+            // 
+            btnNextAtt.Location = new Point(816, 360);
+            btnNextAtt.Name = "btnNextAtt";
+            btnNextAtt.Size = new Size(144, 40);
+            btnNextAtt.TabIndex = 26;
+            btnNextAtt.Text = "Next";
+            btnNextAtt.UseVisualStyleBackColor = true;
+            // 
             // btnDeleteAttendance
             // 
-            btnDeleteAttendance.Location = new Point(816, 360);
+            btnDeleteAttendance.Location = new Point(312, 360);
             btnDeleteAttendance.Name = "btnDeleteAttendance";
             btnDeleteAttendance.Size = new Size(144, 40);
             btnDeleteAttendance.TabIndex = 25;
@@ -242,6 +256,8 @@
             // 
             // tabOvertime
             // 
+            tabOvertime.Controls.Add(btnBackOT);
+            tabOvertime.Controls.Add(btnNextOT);
             tabOvertime.Controls.Add(btnDeleteOT);
             tabOvertime.Controls.Add(btnEditOT);
             tabOvertime.Controls.Add(btnAddOT);
@@ -254,9 +270,27 @@
             tabOvertime.Text = "Overtime";
             tabOvertime.UseVisualStyleBackColor = true;
             // 
+            // btnBackOT
+            // 
+            btnBackOT.Location = new Point(664, 360);
+            btnBackOT.Name = "btnBackOT";
+            btnBackOT.Size = new Size(144, 40);
+            btnBackOT.TabIndex = 30;
+            btnBackOT.Text = "Back";
+            btnBackOT.UseVisualStyleBackColor = true;
+            // 
+            // btnNextOT
+            // 
+            btnNextOT.Location = new Point(816, 360);
+            btnNextOT.Name = "btnNextOT";
+            btnNextOT.Size = new Size(144, 40);
+            btnNextOT.TabIndex = 29;
+            btnNextOT.Text = "Next";
+            btnNextOT.UseVisualStyleBackColor = true;
+            // 
             // btnDeleteOT
             // 
-            btnDeleteOT.Location = new Point(816, 360);
+            btnDeleteOT.Location = new Point(312, 360);
             btnDeleteOT.Name = "btnDeleteOT";
             btnDeleteOT.Size = new Size(144, 40);
             btnDeleteOT.TabIndex = 28;
@@ -283,6 +317,8 @@
             // 
             // tabDeductions
             // 
+            tabDeductions.Controls.Add(btnBackDeduc);
+            tabDeductions.Controls.Add(btnNextDeduc);
             tabDeductions.Controls.Add(btnDeleteDeduction);
             tabDeductions.Controls.Add(btnEditDeduction);
             tabDeductions.Controls.Add(btnAddDeduction);
@@ -295,9 +331,27 @@
             tabDeductions.Text = "Deductions";
             tabDeductions.UseVisualStyleBackColor = true;
             // 
+            // btnBackDeduc
+            // 
+            btnBackDeduc.Location = new Point(664, 360);
+            btnBackDeduc.Name = "btnBackDeduc";
+            btnBackDeduc.Size = new Size(144, 40);
+            btnBackDeduc.TabIndex = 31;
+            btnBackDeduc.Text = "Back";
+            btnBackDeduc.UseVisualStyleBackColor = true;
+            // 
+            // btnNextDeduc
+            // 
+            btnNextDeduc.Location = new Point(816, 360);
+            btnNextDeduc.Name = "btnNextDeduc";
+            btnNextDeduc.Size = new Size(144, 40);
+            btnNextDeduc.TabIndex = 30;
+            btnNextDeduc.Text = "Next";
+            btnNextDeduc.UseVisualStyleBackColor = true;
+            // 
             // btnDeleteDeduction
             // 
-            btnDeleteDeduction.Location = new Point(816, 360);
+            btnDeleteDeduction.Location = new Point(312, 360);
             btnDeleteDeduction.Name = "btnDeleteDeduction";
             btnDeleteDeduction.Size = new Size(144, 40);
             btnDeleteDeduction.TabIndex = 29;
@@ -341,14 +395,6 @@
             dgvPayrollSlipRecord.Size = new Size(952, 392);
             dgvPayrollSlipRecord.TabIndex = 0;
             // 
-            // dgvPeriods
-            // 
-            dgvPeriods.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvPeriods.Location = new Point(8, 8);
-            dgvPeriods.Name = "dgvPeriods";
-            dgvPeriods.Size = new Size(952, 392);
-            dgvPeriods.TabIndex = 0;
-            // 
             // adminPayrollForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -356,8 +402,6 @@
             ClientSize = new Size(992, 521);
             Controls.Add(tabControl);
             Controls.Add(btnRefresh);
-            Controls.Add(btnClear);
-            Controls.Add(btnFilter);
             Controls.Add(cmbName);
             Controls.Add(label2);
             Controls.Add(cmbPos);
@@ -371,13 +415,13 @@
             ((System.ComponentModel.ISupportInitialize)dgvDeduction).EndInit();
             tabControl.ResumeLayout(false);
             tabPeriods.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvPeriods).EndInit();
             tabAttendance.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvAttendance).EndInit();
             tabOvertime.ResumeLayout(false);
             tabDeductions.ResumeLayout(false);
             tabPayrollSlipRecord.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvPayrollSlipRecord).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dgvPeriods).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -392,8 +436,6 @@
         private Label label2;
         private DataGridView dgvOvertime;
         private DataGridView dgvDeduction;
-        private Button btnFilter;
-        private Button btnClear;
         private Button btnRefresh;
         private TabControl tabControl;
         private TabPage tabPeriods;
@@ -413,5 +455,11 @@
         private DataGridView dgvAttendance;
         private DataGridView dgvPayrollSlipRecord;
         private DataGridView dgvPeriods;
+        private Button btnNextAtt;
+        private Button btnNextOT;
+        private Button btnNextDeduc;
+        private Button btnBackAtt;
+        private Button btnBackOT;
+        private Button btnBackDeduc;
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Drawing;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 
@@ -16,79 +15,57 @@ namespace Payroll__C__
         private DateTime activePeriodEnd;
         private string activePeriodLabel = "";
 
-        private TabPage attendanceTab;
-        private TabPage overtimeTab;
-        private TabPage deductionTab;
-        private TabPage payrollSlipTab;
-        private List<TabPage> lockedTabs = new List<TabPage>();
+        private bool isResettingWizard = false;
+        private bool isLoadingFilters = false;
 
         private const decimal OVERTIME_RATE_PER_HOUR = 250m;
+
+        private enum PayrollStep
+        {
+            None = 0,
+            Periods = 1,
+            Attendance = 2,
+            Overtime = 3,
+            Deductions = 4,
+            PayrollSlipRecord = 5
+        }
+
+        private PayrollStep currentStep = PayrollStep.None;
 
         public adminPayrollForm()
         {
             InitializeComponent();
 
-            // Form events
             this.Load += adminPayrollForm_Load;
 
-            // Filter button events
-            btnFilter.Click += btnFilter_Click;
-            btnClear.Click += btnClear_Click;
             btnRefresh.Click += btnRefresh_Click;
 
-            // ComboBox change events
             cmbDept.SelectedIndexChanged += cmbDept_SelectedIndexChanged;
             cmbPos.SelectedIndexChanged += cmbPos_SelectedIndexChanged;
             cmbName.SelectedIndexChanged += cmbName_SelectedIndexChanged;
 
-            // Attendance buttons
             btnAddAttendance.Click += btnAddAttendance_Click;
             btnEditAttendance.Click += btnEditAttendance_Click;
             btnDeleteAttendance.Click += btnDeleteAttendance_Click;
 
-            // Overtime buttons
             btnAddOT.Click += btnAddOT_Click;
             btnEditOT.Click += btnEditOT_Click;
             btnDeleteOT.Click += btnDeleteOT_Click;
 
-            // Deduction buttons
             btnAddDeduction.Click += btnAddDeduction_Click;
             btnEditDeduction.Click += btnEditDeduction_Click;
             btnDeleteDeduction.Click += btnDeleteDeduction_Click;
 
+            btnNextAtt.Click += btnNextAtt_Click;
+            btnNextOT.Click += btnNextOT_Click;
+            btnNextDeduc.Click += btnNextDeduc_Click;
+
+            btnBackAtt.Click += btnBackAtt_Click;
+            btnBackOT.Click += btnBackOT_Click;
+            btnBackDeduc.Click += btnBackDeduc_Click;
+
             dgvPeriods.SelectionChanged += dgvPeriods_SelectionChanged;
             tabControl.Selecting += tabControl_Selecting;
-
-            lockedTabs = new List<TabPage>();
-
-            foreach (TabPage tab in tabControl.TabPages)
-            {
-                if (tab != tabPeriods)
-                    lockedTabs.Add(tab);
-            }
-        }
-
-        private void UpdateTabAccess()
-        {
-            if (!HasActivePeriod)
-            {
-                foreach (TabPage tab in lockedTabs)
-                {
-                    if (tabControl.TabPages.Contains(tab))
-                        tabControl.TabPages.Remove(tab);
-                }
-
-                if (tabControl.SelectedTab != tabPeriods)
-                    tabControl.SelectedTab = tabPeriods;
-            }
-            else
-            {
-                foreach (TabPage tab in lockedTabs)
-                {
-                    if (!tabControl.TabPages.Contains(tab))
-                        tabControl.TabPages.Add(tab);
-                }
-            }
         }
 
         #region Form Load
@@ -97,19 +74,7 @@ namespace Payroll__C__
         {
             try
             {
-                LoadDepartments();
-                LoadPositions();
-                LoadEmployees();
-                LoadPeriods();
-
-                LoadAttendance();
-                LoadOvertime();
-                LoadDeductions();
-                LoadPayrollSlipRecord();
-
-                FormatGrids();
-                UpdatePeriodTabCaption();
-                UpdateTabAccess();
+                ResetWizardToBeginning();
             }
             catch (Exception ex)
             {
@@ -117,6 +82,172 @@ namespace Payroll__C__
                     "Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        #endregion
+
+        #region Wizard / Step Flow
+
+        private bool AreFiltersReady()
+        {
+            return SelectedDeptId > 0 && SelectedPosId > 0 && SelectedEmpId > 0;
+        }
+
+        private void UpdateTabControlState()
+        {
+            bool filtersReady = AreFiltersReady();
+
+            if (!filtersReady)
+            {
+                tabControl.Enabled = false;
+                currentStep = PayrollStep.None;
+                tabControl.SelectedTab = tabPeriods;
+                return;
+            }
+
+            tabControl.Enabled = true;
+
+            if (!HasActivePeriod)
+            {
+                currentStep = PayrollStep.Periods;
+                tabControl.SelectedTab = tabPeriods;
+                return;
+            }
+
+            // Do nothing here when a period already exists.
+            // Only ApplySelectedPeriodFromGrid should move to Attendance.
+        }
+        private bool IsTabAllowed(TabPage tabPage)
+        {
+            if (!tabControl.Enabled)
+                return false;
+
+            switch (currentStep)
+            {
+                case PayrollStep.Periods:
+                    return tabPage == tabPeriods;
+
+                case PayrollStep.Attendance:
+                    return tabPage == tabAttendance;
+
+                case PayrollStep.Overtime:
+                    return tabPage == tabOvertime;
+
+                case PayrollStep.Deductions:
+                    return tabPage == tabDeductions;
+
+                case PayrollStep.PayrollSlipRecord:
+                    return tabPage == tabPayrollSlipRecord;
+
+                default:
+                    return false;
+            }
+        }
+
+        private void btnNextAtt_Click(object? sender, EventArgs e)
+        {
+            if (!HasActivePeriod)
+            {
+                MessageBox.Show("Please select a payroll period first.",
+                    "No Period Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            currentStep = PayrollStep.Overtime;
+            tabControl.SelectedTab = tabOvertime;
+        }
+
+        private void btnNextOT_Click(object? sender, EventArgs e)
+        {
+            if (!HasActivePeriod)
+            {
+                MessageBox.Show("Please select a payroll period first.",
+                    "No Period Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            currentStep = PayrollStep.Deductions;
+            tabControl.SelectedTab = tabDeductions;
+        }
+
+        private void btnNextDeduc_Click(object? sender, EventArgs e)
+        {
+            if (!HasActivePeriod)
+            {
+                MessageBox.Show("Please select a payroll period first.",
+                    "No Period Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            currentStep = PayrollStep.PayrollSlipRecord;
+            tabControl.SelectedTab = tabPayrollSlipRecord;
+        }
+
+        private void btnBackAtt_Click(object? sender, EventArgs e)
+        {
+            currentStep = PayrollStep.Periods;
+            tabControl.SelectedTab = tabPeriods;
+        }
+
+        private void btnBackOT_Click(object? sender, EventArgs e)
+        {
+            currentStep = PayrollStep.Attendance;
+            tabControl.SelectedTab = tabAttendance;
+        }
+
+        private void btnBackDeduc_Click(object? sender, EventArgs e)
+        {
+            currentStep = PayrollStep.Overtime;
+            tabControl.SelectedTab = tabOvertime;
+        }
+
+        private void ResetWizardToBeginning()
+        {
+            isResettingWizard = true;
+            isLoadingFilters = true;
+
+            try
+            {
+                activePayrollId = 0;
+                activePeriodStart = DateTime.MinValue;
+                activePeriodEnd = DateTime.MinValue;
+                activePeriodLabel = "";
+                currentStep = PayrollStep.None;
+
+                LoadDepartments();
+                LoadPositions();
+                LoadEmployees();
+                LoadPeriods();
+
+                if (cmbDept.Items.Count > 0) cmbDept.SelectedIndex = 0;
+                if (cmbPos.Items.Count > 0) cmbPos.SelectedIndex = 0;
+                if (cmbName.Items.Count > 0) cmbName.SelectedIndex = 0;
+
+                dgvPeriods.ClearSelection();
+                dgvPeriods.CurrentCell = null;
+
+                LoadAttendance();
+                LoadOvertime();
+                LoadDeductions();
+                LoadPayrollSlipRecord();
+                FormatGrids();
+
+                UpdatePeriodTabCaption();
+
+                tabControl.Enabled = false;
+                tabControl.SelectedTab = tabPeriods;
+            }
+            finally
+            {
+                isLoadingFilters = false;
+                isResettingWizard = false;
+
+                // Keep the wizard at the true start after refresh/reset
+                currentStep = PayrollStep.None;
+                tabControl.Enabled = false;
+                tabControl.SelectedTab = tabPeriods;
+            }
+        }
+        
 
         #endregion
 
@@ -186,7 +317,6 @@ namespace Payroll__C__
             cmbDept.DataSource = dt;
             cmbDept.DisplayMember = "dept_name";
             cmbDept.ValueMember = "dept_id";
-            cmbDept.SelectedIndex = 0;
         }
 
         private void LoadPositions(int deptId = 0)
@@ -209,7 +339,6 @@ namespace Payroll__C__
             cmbPos.DataSource = dt;
             cmbPos.DisplayMember = "pos_name";
             cmbPos.ValueMember = "pos_id";
-            cmbPos.SelectedIndex = 0;
         }
 
         private void LoadEmployees(int deptId = 0, int posId = 0)
@@ -233,7 +362,6 @@ namespace Payroll__C__
             cmbName.DataSource = dt;
             cmbName.DisplayMember = "full_name";
             cmbName.ValueMember = "emp_id";
-            cmbName.SelectedIndex = 0;
         }
 
         #endregion
@@ -259,25 +387,25 @@ namespace Payroll__C__
 
         private bool HasActivePeriod => activePayrollId > 0;
 
+        #region Period Logic
+
         private void LoadPeriods()
         {
             string query = @"
-        SELECT 
-            payroll_id AS 'Payroll ID',
-            period_start AS 'Period Start',
-            period_end AS 'Period End',
-            pay_date AS 'Pay Date',
-            status AS 'Status'
-        FROM payroll_periods
-        ORDER BY period_start DESC";
+                SELECT 
+                    payroll_id AS 'Payroll ID',
+                    period_start AS 'Period Start',
+                    period_end AS 'Period End',
+                    pay_date AS 'Pay Date',
+                    status AS 'Status'
+                FROM payroll_periods
+                ORDER BY period_start DESC";
 
             dgvPeriods.DataSource = ExecuteQuery(query);
             FormatGrid(dgvPeriods);
 
-            if (dgvPeriods.Rows.Count > 0)
-            {
-                dgvPeriods.ClearSelection();
-            }
+            dgvPeriods.ClearSelection();
+            dgvPeriods.CurrentCell = null;
         }
 
         private void ApplySelectedPeriodFromGrid()
@@ -298,8 +426,11 @@ namespace Payroll__C__
             activePeriodLabel = $"{activePeriodStart:yyyy-MM-dd} to {activePeriodEnd:yyyy-MM-dd}";
 
             UpdatePeriodTabCaption();
-            UpdateTabAccess();
             LoadAllGrids();
+
+            currentStep = PayrollStep.Attendance;
+            tabControl.Enabled = true;
+            tabControl.SelectedTab = tabAttendance;
         }
 
         private void ClearActivePeriod()
@@ -308,9 +439,11 @@ namespace Payroll__C__
             activePeriodStart = DateTime.MinValue;
             activePeriodEnd = DateTime.MinValue;
             activePeriodLabel = "";
+            currentStep = AreFiltersReady() ? PayrollStep.Periods : PayrollStep.None;
+
             UpdatePeriodTabCaption();
-            UpdateTabAccess();
             LoadAllGrids();
+            UpdateTabControlState();
         }
 
         private void UpdatePeriodTabCaption()
@@ -338,9 +471,20 @@ namespace Payroll__C__
 
         private void dgvPeriods_SelectionChanged(object? sender, EventArgs e)
         {
+            if (isResettingWizard || isLoadingFilters)
+                return;
+
+            // Do not allow period auto-selection unless the user already finished the filters
+            if (!AreFiltersReady())
+                return;
+
+            // Only allow period picking while the wizard is on the Periods step
+            if (currentStep != PayrollStep.Periods)
+                return;
+
             try
             {
-                if (dgvPeriods.CurrentRow != null)
+                if (dgvPeriods.CurrentRow != null && dgvPeriods.CurrentCell != null)
                     ApplySelectedPeriodFromGrid();
             }
             catch
@@ -350,36 +494,69 @@ namespace Payroll__C__
 
         private void tabControl_Selecting(object? sender, TabControlCancelEventArgs e)
         {
-            if (e.TabPage == tabPeriods)
+            if (!tabControl.Enabled)
+            {
+                e.Cancel = true;
                 return;
+            }
+
+            if (IsTabAllowed(e.TabPage))
+                return;
+
+            e.Cancel = true;
+
+            if (!AreFiltersReady())
+            {
+                MessageBox.Show("Please fill up the Department, Position, and Name first.",
+                    "Filters Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             if (!HasActivePeriod)
             {
-                e.Cancel = true;
                 MessageBox.Show("Please select a payroll period first in the Periods tab.",
                     "No Period Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (currentStep == PayrollStep.Attendance)
+            {
+                MessageBox.Show("Please complete Attendance first, then click Next.",
+                    "Attendance First", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else if (currentStep == PayrollStep.Overtime)
+            {
+                MessageBox.Show("Please complete Overtime first, then click Next.",
+                    "Overtime First", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else if (currentStep == PayrollStep.Deductions)
+            {
+                MessageBox.Show("Please complete Deductions first, then click Next.",
+                    "Deductions First", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+
+        #endregion
 
         #region Load Grids
 
         private void LoadAttendance()
         {
             string query = @"
-        SELECT 
-            a.att_id AS 'ID',
-            e.emp_id AS 'Employee ID',
-            CONCAT(e.f_name, ' ', e.l_name) AS 'Employee Name',
-            a.work_date AS 'Work Date',
-            a.time_in AS 'Time In',
-            a.time_out AS 'Time Out'
-        FROM attendance a
-        INNER JOIN employees e ON a.emp_id = e.emp_id
-        WHERE (@empId = 0 OR a.emp_id = @empId)
-          AND (@deptId = 0 OR e.dept_id = @deptId)
-          AND (@posId = 0 OR e.pos_id = @posId)
-          AND (@hasPeriod = 0 OR a.work_date BETWEEN @periodStart AND @periodEnd)
-        ORDER BY a.work_date DESC, e.f_name, e.l_name";
+                SELECT 
+                    a.att_id AS 'ID',
+                    e.emp_id AS 'Employee ID',
+                    CONCAT(e.f_name, ' ', e.l_name) AS 'Employee Name',
+                    a.work_date AS 'Work Date',
+                    a.time_in AS 'Time In',
+                    a.time_out AS 'Time Out'
+                FROM attendance a
+                INNER JOIN employees e ON a.emp_id = e.emp_id
+                WHERE (@empId = 0 OR a.emp_id = @empId)
+                  AND (@deptId = 0 OR e.dept_id = @deptId)
+                  AND (@posId = 0 OR e.pos_id = @posId)
+                  AND (@hasPeriod = 0 OR a.work_date BETWEEN @periodStart AND @periodEnd)
+                ORDER BY a.work_date DESC, e.f_name, e.l_name";
 
             dgvAttendance.DataSource = ExecuteQuery(query,
                 new MySqlParameter("@empId", SelectedEmpId),
@@ -393,19 +570,19 @@ namespace Payroll__C__
         private void LoadOvertime()
         {
             string query = @"
-        SELECT 
-            o.ot_id AS 'ID',
-            e.emp_id AS 'Employee ID',
-            CONCAT(e.f_name, ' ', e.l_name) AS 'Employee Name',
-            o.ot_date AS 'OT Date',
-            o.hours AS 'Hours'
-        FROM overtime o
-        INNER JOIN employees e ON o.emp_id = e.emp_id
-        WHERE (@empId = 0 OR o.emp_id = @empId)
-          AND (@deptId = 0 OR e.dept_id = @deptId)
-          AND (@posId = 0 OR e.pos_id = @posId)
-          AND (@hasPeriod = 0 OR o.ot_date BETWEEN @periodStart AND @periodEnd)
-        ORDER BY o.ot_date DESC, e.f_name, e.l_name";
+                SELECT 
+                    o.ot_id AS 'ID',
+                    e.emp_id AS 'Employee ID',
+                    CONCAT(e.f_name, ' ', e.l_name) AS 'Employee Name',
+                    o.ot_date AS 'OT Date',
+                    o.hours AS 'Hours'
+                FROM overtime o
+                INNER JOIN employees e ON o.emp_id = e.emp_id
+                WHERE (@empId = 0 OR o.emp_id = @empId)
+                  AND (@deptId = 0 OR e.dept_id = @deptId)
+                  AND (@posId = 0 OR e.pos_id = @posId)
+                  AND (@hasPeriod = 0 OR o.ot_date BETWEEN @periodStart AND @periodEnd)
+                ORDER BY o.ot_date DESC, e.f_name, e.l_name";
 
             dgvOvertime.DataSource = ExecuteQuery(query,
                 new MySqlParameter("@empId", SelectedEmpId),
@@ -419,22 +596,22 @@ namespace Payroll__C__
         private void LoadDeductions()
         {
             string query = @"
-        SELECT 
-            pdi.ded_id AS 'ID',
-            e.emp_id AS 'Employee ID',
-            CONCAT(e.f_name, ' ', e.l_name) AS 'Employee Name',
-            pdi.ded_type AS 'Deduction',
-            pdi.amount AS 'Amount',
-            CONCAT(DATE_FORMAT(pp.period_start, '%Y-%m-%d'), ' to ', DATE_FORMAT(pp.period_end, '%Y-%m-%d')) AS 'Payroll Period'
-        FROM payroll_deduction_items pdi
-        INNER JOIN payroll_slip_record psr ON pdi.pay_rec_id = psr.pay_rec_id
-        INNER JOIN employees e ON psr.emp_id = e.emp_id
-        INNER JOIN payroll_periods pp ON psr.payroll_id = pp.payroll_id
-        WHERE (@empId = 0 OR e.emp_id = @empId)
-          AND (@deptId = 0 OR e.dept_id = @deptId)
-          AND (@posId = 0 OR e.pos_id = @posId)
-          AND (@payrollId = 0 OR psr.payroll_id = @payrollId)
-        ORDER BY pp.period_start DESC, e.f_name, e.l_name";
+                SELECT 
+                    pdi.ded_id AS 'ID',
+                    e.emp_id AS 'Employee ID',
+                    CONCAT(e.f_name, ' ', e.l_name) AS 'Employee Name',
+                    pdi.ded_type AS 'Deduction',
+                    pdi.amount AS 'Amount',
+                    CONCAT(DATE_FORMAT(pp.period_start, '%Y-%m-%d'), ' to ', DATE_FORMAT(pp.period_end, '%Y-%m-%d')) AS 'Payroll Period'
+                FROM payroll_deduction_items pdi
+                INNER JOIN payroll_slip_record psr ON pdi.pay_rec_id = psr.pay_rec_id
+                INNER JOIN employees e ON psr.emp_id = e.emp_id
+                INNER JOIN payroll_periods pp ON psr.payroll_id = pp.payroll_id
+                WHERE (@empId = 0 OR e.emp_id = @empId)
+                  AND (@deptId = 0 OR e.dept_id = @deptId)
+                  AND (@posId = 0 OR e.pos_id = @posId)
+                  AND (@payrollId = 0 OR psr.payroll_id = @payrollId)
+                ORDER BY pp.period_start DESC, e.f_name, e.l_name";
 
             dgvDeduction.DataSource = ExecuteQuery(query,
                 new MySqlParameter("@empId", SelectedEmpId),
@@ -446,27 +623,27 @@ namespace Payroll__C__
         private void LoadPayrollSlipRecord()
         {
             string query = @"
-        SELECT 
-            psr.pay_rec_id AS 'Record ID',
-            psr.payroll_id AS 'Payroll ID',
-            e.emp_id AS 'Employee ID',
-            CONCAT(e.f_name, ' ', e.l_name) AS 'Employee Name',
-            CONCAT(
-                DATE_FORMAT(pp.period_start, '%Y-%m-%d'),
-                ' to ',
-                DATE_FORMAT(pp.period_end, '%Y-%m-%d')
-            ) AS 'Payroll Period',
-            psr.gross_pay AS 'Gross Pay',
-            psr.total_deduction AS 'Total Deduction',
-            psr.net_pay AS 'Net Pay'
-        FROM payroll_slip_record psr
-        INNER JOIN employees e ON psr.emp_id = e.emp_id
-        INNER JOIN payroll_periods pp ON psr.payroll_id = pp.payroll_id
-        WHERE (@empId = 0 OR psr.emp_id = @empId)
-          AND (@deptId = 0 OR e.dept_id = @deptId)
-          AND (@posId = 0 OR e.pos_id = @posId)
-          AND (@payrollId = 0 OR psr.payroll_id = @payrollId)
-        ORDER BY psr.payroll_id DESC, e.f_name, e.l_name";
+                SELECT 
+                    psr.pay_rec_id AS 'Record ID',
+                    psr.payroll_id AS 'Payroll ID',
+                    e.emp_id AS 'Employee ID',
+                    CONCAT(e.f_name, ' ', e.l_name) AS 'Employee Name',
+                    CONCAT(
+                        DATE_FORMAT(pp.period_start, '%Y-%m-%d'),
+                        ' to ',
+                        DATE_FORMAT(pp.period_end, '%Y-%m-%d')
+                    ) AS 'Payroll Period',
+                    psr.gross_pay AS 'Gross Pay',
+                    psr.total_deduction AS 'Total Deduction',
+                    psr.net_pay AS 'Net Pay'
+                FROM payroll_slip_record psr
+                INNER JOIN employees e ON psr.emp_id = e.emp_id
+                INNER JOIN payroll_periods pp ON psr.payroll_id = pp.payroll_id
+                WHERE (@empId = 0 OR psr.emp_id = @empId)
+                  AND (@deptId = 0 OR e.dept_id = @deptId)
+                  AND (@posId = 0 OR e.pos_id = @posId)
+                  AND (@payrollId = 0 OR psr.payroll_id = @payrollId)
+                ORDER BY psr.payroll_id DESC, e.f_name, e.l_name";
 
             dgvPayrollSlipRecord.DataSource = ExecuteQuery(query,
                 new MySqlParameter("@empId", SelectedEmpId),
@@ -511,58 +688,47 @@ namespace Payroll__C__
 
         #region Filter Events
 
-        private void btnFilter_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                LoadAllGrids();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Filter error:\n" + ex.Message,
-                    "Filter Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void btnClear_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                cmbDept.SelectedIndex = 0;
-                cmbPos.SelectedIndex = 0;
-                cmbName.SelectedIndex = 0;
-
-                dgvPeriods.ClearSelection();
-                ClearActivePeriod();
-                tabControl.SelectedTab = tabPeriods;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Clear error:\n" + ex.Message,
-                    "Clear Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            try
+            DialogResult result = MessageBox.Show(
+                "Refresh and reload this whole form from the beginning?",
+                "Refresh",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result != DialogResult.Yes)
+                return;
+
+            Control parentContainer = this.Parent;
+
+            if (parentContainer == null)
             {
-                LoadDepartments();
-                LoadPositions();
-                LoadEmployees();
-                LoadPeriods();
-                ClearActivePeriod();
-                tabControl.SelectedTab = tabPeriods;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Refresh error:\n" + ex.Message,
+                MessageBox.Show("Parent container not found.",
                     "Refresh Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
+
+            this.Hide();
+
+            adminPayrollForm newForm = new adminPayrollForm
+            {
+                TopLevel = false,
+                FormBorderStyle = FormBorderStyle.None,
+                Dock = DockStyle.Fill
+            };
+
+            parentContainer.Controls.Clear();
+            parentContainer.Controls.Add(newForm);
+            newForm.Show();
+
+            this.Dispose();
         }
 
         private void cmbDept_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (isResettingWizard || isLoadingFilters)
+                return;
+
             try
             {
                 int deptId = SelectedDeptId;
@@ -571,12 +737,16 @@ namespace Payroll__C__
             }
             catch
             {
-                // Prevent startup binding errors from showing
             }
+
+            UpdateTabControlState();
         }
 
         private void cmbPos_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (isResettingWizard || isLoadingFilters)
+                return;
+
             try
             {
                 LoadEmployees(SelectedDeptId, SelectedPosId);
@@ -584,10 +754,15 @@ namespace Payroll__C__
             catch
             {
             }
+
+            UpdateTabControlState();
         }
 
         private void cmbName_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (isResettingWizard || isLoadingFilters)
+                return;
+
             try
             {
                 LoadAllGrids();
@@ -595,7 +770,13 @@ namespace Payroll__C__
             catch
             {
             }
+
+            UpdateTabControlState();
         }
+
+        #endregion
+
+        #region Helpers
 
         private int GetSelectedPayrollRecordId()
         {
@@ -625,9 +806,9 @@ namespace Payroll__C__
                 decimal totalDeductions = 0m;
 
                 string earningsQuery = @"
-            SELECT COALESCE(SUM(amount), 0)
-            FROM payroll_earning_items
-            WHERE pay_rec_id = @payRecId";
+                    SELECT COALESCE(SUM(amount), 0)
+                    FROM payroll_earning_items
+                    WHERE pay_rec_id = @payRecId";
 
                 using (MySqlCommand cmd = new MySqlCommand(earningsQuery, con))
                 {
@@ -639,9 +820,9 @@ namespace Payroll__C__
                 }
 
                 string deductionsQuery = @"
-            SELECT COALESCE(SUM(amount), 0)
-            FROM payroll_deduction_items
-            WHERE pay_rec_id = @payRecId";
+                    SELECT COALESCE(SUM(amount), 0)
+                    FROM payroll_deduction_items
+                    WHERE pay_rec_id = @payRecId";
 
                 using (MySqlCommand cmd = new MySqlCommand(deductionsQuery, con))
                 {
@@ -655,11 +836,11 @@ namespace Payroll__C__
                 decimal netPay = totalEarnings - totalDeductions;
 
                 string updateQuery = @"
-            UPDATE payroll_slip_record
-            SET gross_pay = @grossPay,
-                total_deduction = @totalDeduction,
-                net_pay = @netPay
-            WHERE pay_rec_id = @payRecId";
+                    UPDATE payroll_slip_record
+                    SET gross_pay = @grossPay,
+                        total_deduction = @totalDeduction,
+                        net_pay = @netPay
+                    WHERE pay_rec_id = @payRecId";
 
                 using (MySqlCommand cmd = new MySqlCommand(updateQuery, con))
                 {
@@ -712,18 +893,6 @@ namespace Payroll__C__
                 return;
             }
 
-            if (!HasActivePeriod)
-            {
-                MessageBox.Show("Please select a payroll period first.");
-                return;
-            }
-
-            if (!IsDateWithinActivePeriod(workDate))
-            {
-                MessageBox.Show($"Attendance date must be within the active period:\n{activePeriodLabel}");
-                return;
-            }
-
             if (!TryParseTime(timeInText, out TimeSpan timeIn))
             {
                 MessageBox.Show("Invalid time in format.");
@@ -737,8 +906,8 @@ namespace Payroll__C__
             }
 
             string query = @"
-        INSERT INTO attendance (emp_id, work_date, time_in, time_out)
-        VALUES (@empId, @workDate, @timeIn, @timeOut)";
+                INSERT INTO attendance (emp_id, work_date, time_in, time_out)
+                VALUES (@empId, @workDate, @timeIn, @timeOut)";
 
             ExecuteNonQuery(query,
                 new MySqlParameter("@empId", SelectedEmpId),
@@ -761,6 +930,8 @@ namespace Payroll__C__
             }
 
             int attId = Convert.ToInt32(dgvAttendance.CurrentRow.Cells["ID"].Value);
+            int empId = Convert.ToInt32(dgvAttendance.CurrentRow.Cells["Employee ID"].Value);
+
             string currentDate = dgvAttendance.CurrentRow.Cells["Work Date"].Value?.ToString() ?? "";
             string currentTimeIn = dgvAttendance.CurrentRow.Cells["Time In"].Value?.ToString() ?? "";
             string currentTimeOut = dgvAttendance.CurrentRow.Cells["Time Out"].Value?.ToString() ?? "";
@@ -780,6 +951,18 @@ namespace Payroll__C__
                 return;
             }
 
+            if (!HasActivePeriod)
+            {
+                MessageBox.Show("Please select a payroll period first.");
+                return;
+            }
+
+            if (!IsDateWithinActivePeriod(workDate))
+            {
+                MessageBox.Show($"Attendance date must be within the active period:\n{activePeriodLabel}");
+                return;
+            }
+
             if (!TryParseTime(newTimeIn, out TimeSpan timeIn))
             {
                 MessageBox.Show("Invalid time in format.");
@@ -793,11 +976,11 @@ namespace Payroll__C__
             }
 
             string query = @"
-        UPDATE attendance
-        SET work_date = @workDate,
-            time_in = @timeIn,
-            time_out = @timeOut
-        WHERE att_id = @attId";
+                UPDATE attendance
+                SET work_date = @workDate,
+                    time_in = @timeIn,
+                    time_out = @timeOut
+                WHERE att_id = @attId";
 
             ExecuteNonQuery(query,
                 new MySqlParameter("@workDate", workDate.Date),
@@ -805,13 +988,11 @@ namespace Payroll__C__
                 new MySqlParameter("@timeOut", timeOut),
                 new MySqlParameter("@attId", attId));
 
-            LoadAttendance();
-            MessageBox.Show("Attendance updated successfully.");
-
-            int empId = Convert.ToInt32(dgvAttendance.CurrentRow.Cells["Employee ID"].Value);
             RebuildPayrollSlipForEmployee(activePayrollId, empId);
             LoadAttendance();
             LoadPayrollSlipRecord();
+
+            MessageBox.Show("Attendance updated successfully.");
         }
 
         private void btnDeleteAttendance_Click(object sender, EventArgs e)
@@ -823,6 +1004,7 @@ namespace Payroll__C__
             }
 
             int attId = Convert.ToInt32(dgvAttendance.CurrentRow.Cells["ID"].Value);
+            int empId = Convert.ToInt32(dgvAttendance.CurrentRow.Cells["Employee ID"].Value);
 
             DialogResult result = MessageBox.Show(
                 "Are you sure you want to delete this attendance record?",
@@ -836,13 +1018,11 @@ namespace Payroll__C__
 
             ExecuteNonQuery(query, new MySqlParameter("@attId", attId));
 
-            LoadAttendance();
-            MessageBox.Show("Attendance deleted successfully.");
-
-            int empId = Convert.ToInt32(dgvAttendance.CurrentRow.Cells["Employee ID"].Value);
             RebuildPayrollSlipForEmployee(activePayrollId, empId);
             LoadAttendance();
             LoadPayrollSlipRecord();
+
+            MessageBox.Show("Attendance deleted successfully.");
         }
 
         #endregion
@@ -871,18 +1051,6 @@ namespace Payroll__C__
             }
 
             if (!HasActivePeriod)
-{
-                MessageBox.Show("Please select a payroll period first.");
-                return;
-            }
-
-            if (!IsDateWithinActivePeriod(otDate))
-            {
-                MessageBox.Show($"OT date must be within the active period:\n{activePeriodLabel}");
-                return;
-            }
-
-            if (!HasActivePeriod)
             {
                 MessageBox.Show("Please select a payroll period first.");
                 return;
@@ -901,8 +1069,8 @@ namespace Payroll__C__
             }
 
             string query = @"
-        INSERT INTO overtime (emp_id, ot_date, hours)
-        VALUES (@empId, @otDate, @hours)";
+                INSERT INTO overtime (emp_id, ot_date, hours)
+                VALUES (@empId, @otDate, @hours)";
 
             ExecuteNonQuery(query,
                 new MySqlParameter("@empId", SelectedEmpId),
@@ -924,6 +1092,8 @@ namespace Payroll__C__
             }
 
             int otId = Convert.ToInt32(dgvOvertime.CurrentRow.Cells["ID"].Value);
+            int empId = Convert.ToInt32(dgvOvertime.CurrentRow.Cells["Employee ID"].Value);
+
             string currentDate = dgvOvertime.CurrentRow.Cells["OT Date"].Value?.ToString() ?? "";
             string currentHours = dgvOvertime.CurrentRow.Cells["Hours"].Value?.ToString() ?? "";
 
@@ -939,6 +1109,18 @@ namespace Payroll__C__
                 return;
             }
 
+            if (!HasActivePeriod)
+            {
+                MessageBox.Show("Please select a payroll period first.");
+                return;
+            }
+
+            if (!IsDateWithinActivePeriod(otDate))
+            {
+                MessageBox.Show($"OT date must be within the active period:\n{activePeriodLabel}");
+                return;
+            }
+
             if (!decimal.TryParse(newHours, out decimal hours))
             {
                 MessageBox.Show("Invalid hours value.");
@@ -946,23 +1128,21 @@ namespace Payroll__C__
             }
 
             string query = @"
-        UPDATE overtime
-        SET ot_date = @otDate,
-            hours = @hours
-        WHERE ot_id = @otId";
+                UPDATE overtime
+                SET ot_date = @otDate,
+                    hours = @hours
+                WHERE ot_id = @otId";
 
             ExecuteNonQuery(query,
                 new MySqlParameter("@otDate", otDate.Date),
                 new MySqlParameter("@hours", hours),
                 new MySqlParameter("@otId", otId));
 
-            LoadOvertime();
-            MessageBox.Show("Overtime updated successfully.");
-
-            int empId = Convert.ToInt32(dgvOvertime.CurrentRow.Cells["Employee ID"].Value);
             RebuildPayrollSlipForEmployee(activePayrollId, empId);
             LoadOvertime();
             LoadPayrollSlipRecord();
+
+            MessageBox.Show("Overtime updated successfully.");
         }
 
         private void btnDeleteOT_Click(object sender, EventArgs e)
@@ -988,12 +1168,11 @@ namespace Payroll__C__
 
             ExecuteNonQuery(query, new MySqlParameter("@otId", otId));
 
-            LoadOvertime();
-            MessageBox.Show("Overtime deleted successfully.");
-
             RebuildPayrollSlipForEmployee(activePayrollId, empId);
             LoadOvertime();
             LoadPayrollSlipRecord();
+
+            MessageBox.Show("Overtime deleted successfully.");
         }
 
         #endregion
@@ -1031,8 +1210,8 @@ namespace Payroll__C__
             }
 
             string query = @"
-        INSERT INTO payroll_deduction_items (pay_rec_id, ded_type, amount)
-        VALUES (@payRecId, @dedType, @amount)";
+                INSERT INTO payroll_deduction_items (pay_rec_id, ded_type, amount)
+                VALUES (@payRecId, @dedType, @amount)";
 
             ExecuteNonQuery(query,
                 new MySqlParameter("@payRecId", payRecId),
@@ -1076,10 +1255,10 @@ namespace Payroll__C__
             );
 
             string query = @"
-        UPDATE payroll_deduction_items
-        SET ded_type = @dedType,
-            amount = @amount
-        WHERE ded_id = @dedId";
+                UPDATE payroll_deduction_items
+                SET ded_type = @dedType,
+                    amount = @amount
+                WHERE ded_id = @dedId";
 
             ExecuteNonQuery(query,
                 new MySqlParameter("@dedType", newType),
@@ -1129,15 +1308,16 @@ namespace Payroll__C__
 
         #endregion
 
-        #region EnsurePayrollPeriod
+        #region Payroll Slip Helpers
+
         private int EnsurePayrollSlipRecord(int payrollId, int empId)
         {
             object existing = ExecuteScalar(@"
-        SELECT pay_rec_id
-        FROM payroll_slip_record
-        WHERE payroll_id = @payrollId
-          AND emp_id = @empId
-        LIMIT 1",
+                SELECT pay_rec_id
+                FROM payroll_slip_record
+                WHERE payroll_id = @payrollId
+                  AND emp_id = @empId
+                LIMIT 1",
                 new MySqlParameter("@payrollId", payrollId),
                 new MySqlParameter("@empId", empId));
 
@@ -1146,9 +1326,9 @@ namespace Payroll__C__
 
             using (MySqlConnection con = new MySqlConnection(connectionString))
             using (MySqlCommand cmd = new MySqlCommand(@"
-        INSERT INTO payroll_slip_record (payroll_id, emp_id, gross_pay, total_deduction, net_pay)
-        VALUES (@payrollId, @empId, 0, 0, 0);
-        SELECT LAST_INSERT_ID();", con))
+                INSERT INTO payroll_slip_record (payroll_id, emp_id, gross_pay, total_deduction, net_pay)
+                VALUES (@payrollId, @empId, 0, 0, 0);
+                SELECT LAST_INSERT_ID();", con))
             {
                 cmd.Parameters.AddWithValue("@payrollId", payrollId);
                 cmd.Parameters.AddWithValue("@empId", empId);
@@ -1161,11 +1341,11 @@ namespace Payroll__C__
         private int EnsureEarningItem(int payRecId, string earnType)
         {
             object existing = ExecuteScalar(@"
-        SELECT earning_id
-        FROM payroll_earning_items
-        WHERE pay_rec_id = @payRecId
-          AND earn_type = @earnType
-        LIMIT 1",
+                SELECT earning_id
+                FROM payroll_earning_items
+                WHERE pay_rec_id = @payRecId
+                  AND earn_type = @earnType
+                LIMIT 1",
                 new MySqlParameter("@payRecId", payRecId),
                 new MySqlParameter("@earnType", earnType));
 
@@ -1174,9 +1354,9 @@ namespace Payroll__C__
 
             using (MySqlConnection con = new MySqlConnection(connectionString))
             using (MySqlCommand cmd = new MySqlCommand(@"
-        INSERT INTO payroll_earning_items (pay_rec_id, earn_type, amount)
-        VALUES (@payRecId, @earnType, 0);
-        SELECT LAST_INSERT_ID();", con))
+                INSERT INTO payroll_earning_items (pay_rec_id, earn_type, amount)
+                VALUES (@payRecId, @earnType, 0);
+                SELECT LAST_INSERT_ID();", con))
             {
                 cmd.Parameters.AddWithValue("@payRecId", payRecId);
                 cmd.Parameters.AddWithValue("@earnType", earnType);
@@ -1185,6 +1365,7 @@ namespace Payroll__C__
                 return Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
+
         private void EnsureDefaultPayrollItems(int payrollId, int empId)
         {
             int payRecId = EnsurePayrollSlipRecord(payrollId, empId);
@@ -1192,16 +1373,14 @@ namespace Payroll__C__
             EnsureEarningItem(payRecId, "Overtime Pay");
         }
 
-        #endregion
-
         private decimal GetEmployeeSemiMonthlyBasicPay(int empId)
         {
             object result = ExecuteScalar(@"
-        SELECT COALESCE(p.basic_salary, 0)
-        FROM employees e
-        INNER JOIN positions p ON e.pos_id = p.pos_id
-        WHERE e.emp_id = @empId
-        LIMIT 1",
+                SELECT COALESCE(p.basic_salary, 0)
+                FROM employees e
+                INNER JOIN positions p ON e.pos_id = p.pos_id
+                WHERE e.emp_id = @empId
+                LIMIT 1",
                 new MySqlParameter("@empId", empId));
 
             decimal monthlySalary = result != null && result != DBNull.Value
@@ -1217,10 +1396,10 @@ namespace Payroll__C__
                 return 0m;
 
             object result = ExecuteScalar(@"
-        SELECT COALESCE(SUM(hours), 0)
-        FROM overtime
-        WHERE emp_id = @empId
-          AND ot_date BETWEEN @periodStart AND @periodEnd",
+                SELECT COALESCE(SUM(hours), 0)
+                FROM overtime
+                WHERE emp_id = @empId
+                  AND ot_date BETWEEN @periodStart AND @periodEnd",
                 new MySqlParameter("@empId", empId),
                 new MySqlParameter("@periodStart", activePeriodStart),
                 new MySqlParameter("@periodEnd", activePeriodEnd));
@@ -1233,33 +1412,34 @@ namespace Payroll__C__
         private void UpsertEarningItemAmount(int payRecId, string earnType, decimal amount)
         {
             object existing = ExecuteScalar(@"
-        SELECT earning_id
-        FROM payroll_earning_items
-        WHERE pay_rec_id = @payRecId
-          AND earn_type = @earnType
-        LIMIT 1",
+                SELECT earning_id
+                FROM payroll_earning_items
+                WHERE pay_rec_id = @payRecId
+                  AND earn_type = @earnType
+                LIMIT 1",
                 new MySqlParameter("@payRecId", payRecId),
                 new MySqlParameter("@earnType", earnType));
 
             if (existing != null && existing != DBNull.Value)
             {
                 ExecuteNonQuery(@"
-            UPDATE payroll_earning_items
-            SET amount = @amount
-            WHERE earning_id = @earningId",
+                    UPDATE payroll_earning_items
+                    SET amount = @amount
+                    WHERE earning_id = @earningId",
                     new MySqlParameter("@amount", amount),
                     new MySqlParameter("@earningId", Convert.ToInt32(existing)));
             }
             else
             {
                 ExecuteNonQuery(@"
-            INSERT INTO payroll_earning_items (pay_rec_id, earn_type, amount)
-            VALUES (@payRecId, @earnType, @amount)",
+                    INSERT INTO payroll_earning_items (pay_rec_id, earn_type, amount)
+                    VALUES (@payRecId, @earnType, @amount)",
                     new MySqlParameter("@payRecId", payRecId),
                     new MySqlParameter("@earnType", earnType),
                     new MySqlParameter("@amount", amount));
             }
         }
+
         private void RebuildPayrollSlipForEmployee(int payrollId, int empId)
         {
             if (payrollId <= 0 || empId <= 0)
@@ -1277,8 +1457,11 @@ namespace Payroll__C__
             RecalculatePayrollRecord(payRecId);
         }
     }
+}
 
-    // Simple reusable input box for WinForms
+
+        #endregion
+
     public static class Prompt
     {
         public static string ShowDialog(string text, string caption, string defaultValue = "")
@@ -1338,7 +1521,4 @@ namespace Payroll__C__
 
             return prompt.ShowDialog() == DialogResult.OK ? txtInput.Text : "";
         }
-    
-    
     }
-}
