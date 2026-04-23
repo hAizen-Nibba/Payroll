@@ -167,6 +167,7 @@
             Controls.Add(label1);
             Controls.Add(pictureBox1);
             FormBorderStyle = FormBorderStyle.Fixed3D;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "adminMain";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "admin";

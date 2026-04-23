@@ -309,6 +309,7 @@
             Controls.Add(pictureBox1);
             Controls.Add(pictureBox3);
             FormBorderStyle = FormBorderStyle.Fixed3D;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Employee";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Employee";
