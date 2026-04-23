@@ -207,77 +207,127 @@ namespace Payroll__C__
         private void PrintDocument1_PrintPage(object? sender, PrintPageEventArgs e)
         {
             Graphics g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-            using Font titleFont = new Font("Arial", 18, FontStyle.Bold);
-            using Font sectionFont = new Font("Arial", 12, FontStyle.Bold);
-            using Font headerFont = new Font("Arial", 11, FontStyle.Bold);
-            using Font bodyFont = new Font("Arial", 11, FontStyle.Regular);
-            using Font netPayFont = new Font("Arial", 13, FontStyle.Bold);
+            // Fonts
+            using Font titleFont = new Font("Segoe UI", 20, FontStyle.Bold);
+            using Font subtitleFont = new Font("Segoe UI", 10, FontStyle.Regular);
+            using Font sectionTitleFont = new Font("Segoe UI", 11, FontStyle.Bold);
+            using Font labelFont = new Font("Segoe UI", 10, FontStyle.Bold);
+            using Font valueFont = new Font("Segoe UI", 10, FontStyle.Regular);
+            using Font netPayLabelFont = new Font("Segoe UI", 11, FontStyle.Bold);
+            using Font netPayValueFont = new Font("Segoe UI", 18, FontStyle.Bold);
+            using Font footerFont = new Font("Segoe UI", 9, FontStyle.Italic);
 
-            float left = 60;
-            float right = 750;
-            float top = 60;
-            float y = top;
+            // Brushes / Pens
+            using Brush blueBrush = new SolidBrush(Color.FromArgb(33, 150, 243));
+            using Brush darkBrush = new SolidBrush(Color.FromArgb(45, 45, 45));
+            using Brush grayBrush = new SolidBrush(Color.FromArgb(110, 110, 110));
+            using Brush lightGrayBrush = new SolidBrush(Color.FromArgb(245, 247, 250));
+            using Brush whiteBrush = new SolidBrush(Color.White);
+            using Brush greenBrush = new SolidBrush(Color.FromArgb(46, 125, 50));
 
-            g.DrawString("PAYROLL SLIP", titleFont, Brushes.Black, left + 220, y);
+            using Pen borderPen = new Pen(Color.FromArgb(210, 210, 210), 1);
+            using Pen lightPen = new Pen(Color.FromArgb(225, 225, 225), 1);
+
+            // Page/card bounds
+            float pageLeft = 80;
+            float pageTop = 50;
+            float pageWidth = 650;
+            float pageHeight = 900;
+
+            RectangleF cardRect = new RectangleF(pageLeft, pageTop, pageWidth, pageHeight);
+            RectangleF headerRect = new RectangleF(pageLeft, pageTop, pageWidth, 110);
+
+            // Card background
+            g.FillRectangle(whiteBrush, cardRect);
+            g.DrawRectangle(borderPen, cardRect.X, cardRect.Y, cardRect.Width, cardRect.Height);
+
+            // Header
+            g.FillRectangle(blueBrush, headerRect);
+            g.DrawString("PAYROLL SLIP", titleFont, whiteBrush, pageLeft + 25, pageTop + 20);
+            g.DrawString("Employee payroll summary", subtitleFont, whiteBrush, pageLeft + 27, pageTop + 60);
+
+            // Net pay box at top-right
+            RectangleF netTopBox = new RectangleF(pageLeft + pageWidth - 200, pageTop + 20, 160, 60);
+            g.FillRectangle(new SolidBrush(Color.FromArgb(255, 255, 255)), netTopBox);
+            g.DrawRectangle(lightPen, netTopBox.X, netTopBox.Y, netTopBox.Width, netTopBox.Height);
+            g.DrawString("NET PAY", new Font("Segoe UI", 9, FontStyle.Bold), darkBrush, netTopBox.X + 12, netTopBox.Y + 8);
+            g.DrawString("₱" + netPay.ToString("N2"), new Font("Segoe UI", 14, FontStyle.Bold), greenBrush, netTopBox.X + 12, netTopBox.Y + 28);
+
+            float contentLeft = pageLeft + 25;
+            float contentRight = pageLeft + pageWidth - 25;
+            float y = pageTop + 135;
+
+            // Employee info section
+            g.DrawString("Employee Information", sectionTitleFont, darkBrush, contentLeft, y);
+            y += 18;
+            g.DrawLine(lightPen, contentLeft, y, contentRight, y);
+            y += 15;
+
+            DrawInfoRow(g, "Employee Name", employeeName, contentLeft, y, labelFont, valueFont, darkBrush);
+            y += 28;
+            DrawInfoRow(g, "Department", department, contentLeft, y, labelFont, valueFont, darkBrush);
+            y += 28;
+            DrawInfoRow(g, "Position", position, contentLeft, y, labelFont, valueFont, darkBrush);
+            y += 28;
+            DrawInfoRow(g, "Payroll Period", payDate, contentLeft, y, labelFont, valueFont, darkBrush);
             y += 45;
 
-            g.DrawLine(Pens.Black, left, y, right, y);
-            y += 25;
+            // Salary details box
+            RectangleF salaryBox = new RectangleF(contentLeft, y, pageWidth - 50, 220);
+            g.FillRectangle(lightGrayBrush, salaryBox);
+            g.DrawRectangle(borderPen, salaryBox.X, salaryBox.Y, salaryBox.Width, salaryBox.Height);
 
-            g.DrawString("Employee Name:", headerFont, Brushes.Black, left, y);
-            g.DrawString(employeeName, bodyFont, Brushes.Black, left + 160, y);
-            y += 28;
+            float sy = y + 15;
+            g.DrawString("Salary Details", sectionTitleFont, darkBrush, contentLeft + 15, sy);
+            sy += 20;
+            g.DrawLine(lightPen, contentLeft + 15, sy, contentRight - 15, sy);
+            sy += 15;
 
-            g.DrawString("Department:", headerFont, Brushes.Black, left, y);
-            g.DrawString(department, bodyFont, Brushes.Black, left + 160, y);
-            y += 28;
+            DrawAmountRow(g, "Monthly Salary", monthlySalary, contentLeft + 15, contentRight - 20, sy, labelFont, valueFont, darkBrush);
+            sy += 28;
+            DrawAmountRow(g, "Basic Pay", basicPay, contentLeft + 15, contentRight - 20, sy, labelFont, valueFont, darkBrush);
+            sy += 28;
+            DrawAmountRow(g, "Additional Earnings", additionalEarnings, contentLeft + 15, contentRight - 20, sy, labelFont, valueFont, darkBrush);
+            sy += 28;
+            DrawAmountRow(g, "Gross Pay", grossPay, contentLeft + 15, contentRight - 20, sy, labelFont, valueFont, darkBrush);
+            sy += 28;
+            DrawAmountRow(g, "Total Deductions", totalDeductions, contentLeft + 15, contentRight - 20, sy, labelFont, valueFont, darkBrush);
 
-            g.DrawString("Position:", headerFont, Brushes.Black, left, y);
-            g.DrawString(position, bodyFont, Brushes.Black, left + 160, y);
-            y += 28;
+            y += 250;
 
-            g.DrawString("Payroll Period:", headerFont, Brushes.Black, left, y);
-            g.DrawString(payDate, bodyFont, Brushes.Black, left + 160, y);
-            y += 40;
+            // Final net pay highlight
+            RectangleF netBox = new RectangleF(contentLeft, y, pageWidth - 50, 80);
+            g.FillRectangle(new SolidBrush(Color.FromArgb(232, 245, 233)), netBox);
+            g.DrawRectangle(new Pen(Color.FromArgb(165, 214, 167), 1), netBox.X, netBox.Y, netBox.Width, netBox.Height);
 
-            g.DrawLine(Pens.Black, left, y, right, y);
-            y += 20;
+            g.DrawString("Net Pay", netPayLabelFont, darkBrush, netBox.X + 18, netBox.Y + 16);
+            SizeF netSize = g.MeasureString("₱" + netPay.ToString("N2"), netPayValueFont);
+            g.DrawString("₱" + netPay.ToString("N2"), netPayValueFont, greenBrush,
+                netBox.Right - netSize.Width - 18, netBox.Y + 14);
 
-            g.DrawString("Salary Details", sectionFont, Brushes.Black, left, y);
-            y += 30;
+            y += 110;
 
-            g.DrawString("Monthly Salary:", headerFont, Brushes.Black, left, y);
-            g.DrawString("₱" + monthlySalary.ToString("N2"), bodyFont, Brushes.Black, left + 160, y);
-            y += 28;
+            // Footer
+            g.DrawString("This is a system-generated payroll slip.", footerFont, grayBrush, contentLeft, y);
+        }
 
-            g.DrawString("Basic Pay:", headerFont, Brushes.Black, left, y);
-            g.DrawString("₱" + basicPay.ToString("N2"), bodyFont, Brushes.Black, left + 160, y);
-            y += 28;
+        private void DrawInfoRow(Graphics g, string label, string value, float x, float y,
+            Font labelFont, Font valueFont, Brush textBrush)
+        {
+            g.DrawString(label + ":", labelFont, textBrush, x, y);
+            g.DrawString(value, valueFont, textBrush, x + 150, y);
+        }
 
-            g.DrawString("Additional Earnings:", headerFont, Brushes.Black, left, y);
-            g.DrawString("₱" + additionalEarnings.ToString("N2"), bodyFont, Brushes.Black, left + 160, y);
-            y += 28;
+        private void DrawAmountRow(Graphics g, string label, decimal amount, float left, float right, float y,
+            Font labelFont, Font valueFont, Brush textBrush)
+        {
+            g.DrawString(label, labelFont, textBrush, left, y);
 
-            g.DrawString("Gross Pay:", headerFont, Brushes.Black, left, y);
-            g.DrawString("₱" + grossPay.ToString("N2"), bodyFont, Brushes.Black, left + 160, y);
-            y += 28;
-
-            g.DrawString("Total Deductions:", headerFont, Brushes.Black, left, y);
-            g.DrawString("₱" + totalDeductions.ToString("N2"), bodyFont, Brushes.Black, left + 160, y);
-            y += 35;
-
-            g.DrawLine(Pens.Black, left, y, right, y);
-            y += 20;
-
-            g.DrawString("Net Pay:", headerFont, Brushes.Black, left, y);
-            g.DrawString("₱" + netPay.ToString("N2"), netPayFont, Brushes.Black, left + 160, y);
-            y += 45;
-
-            g.DrawLine(Pens.Black, left, y, right, y);
-            y += 30;
-
-            g.DrawString("This is a system-generated payroll slip.", bodyFont, Brushes.Black, left, y);
+            string amountText = "₱" + amount.ToString("N2");
+            SizeF size = g.MeasureString(amountText, valueFont);
+            g.DrawString(amountText, valueFont, textBrush, right - size.Width, y);
         }
     }
 }

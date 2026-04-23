@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Payroll (C#)")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a4d4807b5678ab066dc96007cda47b3e0f8017d9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+59da8ff2fa7180081eb9a4d6fd944e9e3f544f10")]
 [assembly: System.Reflection.AssemblyProductAttribute("Payroll (C#)")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Payroll (C#)")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
